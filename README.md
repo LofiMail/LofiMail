@@ -24,9 +24,9 @@ Join us to craft the future of email management!
 ## 📋 **Features**
 
 - **Quick Search**: Discrete, fast, and powerful search functionality.  
+- **Category Tiles**: Filter emails with visually stunning tag tiles. 
+- **Customizable Themes**: Personalize your webmail interface.   
 - **Email Snoozing**: Manage your inbox your way.  
-- **Category Tiles**: Filter emails with visually stunning tag tiles.  
-- **Customizable Themes**: Personalize your webmail interface.  
 - **Collaborative Enhancements**: Suggest new features or integrations!
 
 ---
@@ -70,10 +70,8 @@ ColorMail is licensed under the [MIT License](LICENSE), ensuring the freedom to 
 
 We’re building a bright future for Mailflow. Here’s what’s next:
 
+- **Implementation from  mockup**  
 - **Integration with IMAP/SMTP servers**  
-- **Advanced Thread Management**  
-- **Mobile-First Design Overhaul**  
-- **Dark Mode Support**  
 
 ---
 
