@@ -8,6 +8,11 @@ Welcome to **ColorMail**, an open-source webmail application dedicated to creati
 Featuring a modern, uncluttered design, colorful visual cues and integrated also sound features, it ensures every interaction is intuitive and engaging.
 Our mission is to deliver an intuitive email experience while fostering a global community of developers, designers, and enthusiasts.
 
+
+<p align="center">
+  <img src="screenshots/WebMailSelection.jpg" alt="Selection of mails" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+</p>
+
 ---
 
 ## 🌟 **Why ColorMail?**
@@ -18,6 +23,12 @@ Our mission is to deliver an intuitive email experience while fostering a global
 - **🌍 Non-Profit Vision**: Focused on empowering users, not monetizing them.  
 
 Join us to craft the future of email management!
+
+
+
+<p align="center">
+  <img src="screenshots/ScreenCapture_Message.jpg" alt="A single mail" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+</p>
 
 ---
 
