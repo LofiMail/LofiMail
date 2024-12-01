@@ -1,10 +1,10 @@
 *A vibrant, sensory-rich webmail experience*
 
-# **ColorMail: Open-Source Webmail Redefined**
+# **LofiMail: Open-Source Webmail Redefined**
 
 ### ✨ **Beautiful. Collaborative. Non-Profit.**
 
-Welcome to **ColorMail**, an open-source webmail application dedicated to creating a modern, elegant, and accessible webmail application. 
+Welcome to **LofiMail**, an open-source webmail application dedicated to creating a modern, elegant, and accessible webmail application. 
 Featuring a modern, uncluttered design, colorful visual cues and integrated also sound features, it ensures every interaction is intuitive and engaging.
 Our mission is to deliver an intuitive email experience while fostering a global community of developers, designers, and enthusiasts.
 
@@ -15,7 +15,7 @@ Our mission is to deliver an intuitive email experience while fostering a global
 
 ---
 
-## 🌟 **Why ColorMail?**
+## 🌟 **Why LofiMail?**
 
 - **🚀 Sleek and Modern Design**: Enjoy a clean, responsive UI designed for productivity.  
 - **🤝 Community-Driven**: Built by contributors from all over the world.  
@@ -49,7 +49,7 @@ We welcome developers, designers, writers, and testers! Follow these steps to st
 1. **Fork the Repository**: Click on the "Fork" button to create your copy.  
 2. **Clone the Repo**:  
    ```bash
-   git clone https://github.com/your-username/ColorMail.git
+   git clone https://github.com/your-username/LofiMail.git
    ```
 3. **Install Dependencies**:  
    ```bash
@@ -73,7 +73,7 @@ Check out the [Contributing Guide](CONTRIBUTING.md) for detailed instructions.
 
 ## 📜 **License**
 
-ColorMail is licensed under the [MIT License](LICENSE), ensuring the freedom to use, modify, and distribute the project.
+LofiMail is licensed under the [MIT License](LICENSE), ensuring the freedom to use, modify, and distribute the project.
 
 ---
 
