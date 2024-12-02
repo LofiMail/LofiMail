@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Webmail Concept</title>
+  <style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  /* height: 100vh; */
+   background: linear-gradient(135deg, #e0eafc, #cfdef3);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1); /* Dark overlay */
+  z-index: -1;
+}
+
+#background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1; /* Ensures it's behind all content */
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  width: 100%; /* Ensure full-page width */
+}
+
+.webmail-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  margin-top: 120px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.25); /* Adjust opacity */
+  /*background-color: #f7f9fc;*/
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.email-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.email-item { 
+  background-color: rgba(255, 255, 255, 0.8); /* Subtle background for distinction */
+  position: relative; /* To position the snooze button inside the box */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 0.9rem;
+  border: 2px solid transparent;
+  margin-right: 10px;
+}
+
+/* Conversation items: stacked effect */
+.email-item.conversation {
+  background-color: rgba(255, 255, 255, 0.8); /* Subtle background for distinction */
+  box-shadow:
+    2px 2px 0px rgba(140, 140, 140, 0.4),    /* Bottom-right shadow for the first "layer" */
+    4px 4px 0px rgba(100, 100, 100, 0.4),    /* Bottom-right shadow for the second "layer" */
+    6px 6px 0px rgba(60, 60, 60, 0.4);     /* Bottom-right shadow for the third "layer" */
+  border-radius: 6px;    /* Rounded edges for a smooth look */
+  padding: 10px;
+  margin-bottom: 5px; /* Extra spacing to account for "stacked" visuals */
+}
+.email-flags {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.email-item:hover {
+  transform: translateY(-2px);
+  transform: scale(1.01); /* Slight zoom on hover */
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Conversation Summary Container */
+.email-conversation-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 3%;
+  /*width: 60px; Adjust as needed */
+  margin-right: 10px;
+}
+
+/* Participant Grid */
+.participants-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 10px);  /*Two columns */
+  grid-gap: 4px; /* Space between circles */
+  margin-bottom: 5px;
+}
+
+.participant-circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff; /* Default color */
+  color: white;
+  font-size: 0.6rem;
+  font-weight: bold;
+  text-align: center;
+  line-height: 20px;
+}
+
+.participant-circle[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  background: #000;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: -30px;
+}
+
+.conversation-icon {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.conversation-icon .participant-count {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background-color: #ff6b6b;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* Email Count Styling */
+.email-count {
+  font-size: 0.6rem;
+  color: #666;
+  text-align: center;
+  border-radius: 10%;
+  border: 1px solid blue; /* Black border for added visibility */
+  padding: 0px 10px;	
+  font-weight: bold;
+}
+
+
+.conversation-bubble {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 24px;
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.conversation-bubble[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  background: #000;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: -30px;
+}
+
+
+/* Styling Specific Elements */
+.email-sender {	
+  font-weight: bold;
+  font-size: 0.9rem;
+  flex: 1 1 10%;
+  text-align: center;
+  display: inline-block; /* Ensures inline display */
+
+
+  border-radius: 15px;  
+  padding: 4px 8px; /* Increased padding for better visibility */
+  font-size: 0.9rem; /* Slightly larger font size */
+  background-color: #AAAAAA; /* Amber */
+  color: #ffffff;   
+  opacity: 0.9; /* Make it slightly transparent for discretion */
+
+
+}
+
+.email-title {
+  flex: 2 1 75%;
+  /*font-variant: small-caps;*/
+  text-transform: uppercase;	
+  font-weight: bold;
+  color: #555;
+  overflow: hidden;
+  font-size: 1.1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 15px;
+}
+
+.email-category {
+  font-weight: 600;
+  flex:  1 1 5%;
+  text-align: center;
+  border-radius: 5px; 
+
+  padding: 4px 8px; /* Increased padding for better visibility */
+  font-size: 0.9rem; /* Slightly larger font size */
+  border: 1px solid black; /* Black border for added visibility */
+}
+
+.email-timestamp {
+  flex: 0 1 4%;
+  text-align: right;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.email-flags {
+  flex: 0 1 3%;
+  position: relative;
+  cursor: pointer;
+padding-left: 15px;
+}
+
+/* Optional: Custom Tooltip Styling */
+.email-flags:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.email-flags:hover::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #333 transparent;
+  z-index: 10;
+}
+
+
+/* Colors for Categories */
+.technical {
+  border-color: #0074cc;
+}
+.meeting {
+  border-color: #34c759;
+}
+.admin {
+  border-color: #ffcc00;
+}
+.newsletter {
+  border-color: #ff9500;
+}
+.company {
+  border-color: #af52de;
+}
+
+/* Category Badges */
+.email-category.technical {
+  background-color: #0074cc;
+  color: #ffffff;
+  /*background-color: #e6f3ff;
+  color: #0074cc;*/
+
+}
+
+.email-category.meeting {
+background-color: #34c759;
+  color: #ffffff;
+  /*background-color: #e9ffe7;
+  color: #34c759;*/
+}
+
+.email-category.admin {
+  background-color: #ffcc00;
+  color: #ffffff;
+  /*background-color: #fff9e6;
+  color: #ffcc00;*/
+}
+
+.email-category.newsletter {
+  background-color: #ff9500;
+  color: #ffffff;
+  /*background-color: #fff2e6;
+  color: #ff9500;*/
+}
+
+.email-category.company {
+  background-color: #af52de;
+  color: #ffffff;
+  /*background-color: #f9e6ff;
+  color: #af52de;*/
+}
+
+
+
+
+
+.message-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%;
+  max-width: 1200px; 
+	height: 700px;
+
+
+  background: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  border: 2px solid #000; /* Black border */
+  z-index: 1000;
+  animation: fadeIn 0.5s ease; 
+
+}
+
+
+.message-body {
+	padding: 20px;
+	line-height: 1.6;
+	color: #333;
+	overflow-y: auto; /* Adds vertical scrollbar */   
+	height: 60%;
+	border-radius: 12px; /* Matches the parent container's border-radius */
+	clip-path: inset(0 round 12px); /* Ensures content, including scrollbar, stays within rounded edges */
+	margin-bottom: 50px;
+}
+
+
+    .blur-background {
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+.message-header {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  /*color: #4a90e2; A calm blue for the title */
+  font-family: 'Georgia', serif;
+  padding: 15px 5px 5px 5px;
+}
+
+/* Horizontal Line for Separation */
+.message-separator {
+  border: 0;
+  border-top: 2px solid #ddd; /* Light grey line */
+  margin: 15px 0;
+  width: 90%; /* Adjust width as needed */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.message-meta {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+
+}
+
+.message-meta .author {
+display: inline-block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff; /* Dark color for clarity */
+  font-family: 'Arial', sans-serif;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  padding: 3px 8px;
+
+}
+.message-meta .fromto {
+  font-size: 0.8rem;  font-style: italic;
+  color: #555; /* Dark color for clarity */
+
+}
+
+
+.message-meta .recipient {
+ display: inline-block;  /* Ensures recipients are on the same line */
+  font-size: 1rem;
+  font-style: italic;
+  color: #fff; /* White text for visibility */
+  font-family: 'Verdana', sans-serif;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+    .message-meta span {
+      margin: 0 5px;
+
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .message-meta .category-1 {
+      background: #ffebc5;
+      color: #c36a00;
+    }
+
+    .message-meta .category-2 {
+      background: #c5ffd2;
+      color: #007d3c;
+    }
+
+/* Categories with different background colors */
+.author-category-1 {
+  background-color: #FFAA00; /* Amber */
+}
+
+.author-category-2 {
+  background-color: #e94e77; /* Pink for category 2 */
+}
+
+.author-category-3 {
+  background-color: #f5a623; /* Orange for category 3 */
+}
+
+.author-category-4 {
+  background-color: #7ed321; /* Green for category 4 */
+}
+
+/* Categories for recipients with different background colors */
+.recipient-category-1 {
+
+  background-color: #80C342; /* Apple Green */
+}
+
+.recipient-category-2 {
+
+  background-color: #FF5C8A; /* Coral Pink */
+}
+
+.recipient-category-3 {
+
+  background-color: #FF7F50; /* Tangerine */
+}
+
+.recipient-category-4 {
+
+  background-color: #7F00FF; /* Electric Violet */
+}
+
+
+
+
+
+
+.voice-button {
+  background-color: #EEEEFF; /* Green background for voice button */ 
+ /* background-color: #EEEEFF; Green background for voice button */
+  /* background-color: #aaeeaa;*/
+  color: white;
+  border: none;
+  padding: 6px 12px; /* Reduced padding for a more discrete look */
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute; /* Absolute positioning within the .mail-header */
+  top: 10px; /* Adjust to position it away from the top */
+  right: 65px; /* Position it flush to the right */
+  opacity: 0.6; /* Make it slightly transparent for discretion */
+}
+
+.voice-button:hover {
+  background-color: #3578b0; Darker green when hovered */  
+  /* background-color: #3578b0; /* Darker green when hovered */
+
+}
+
+.voice-button:focus {
+  outline: none;
+}
+
+
+/* Style for the Close Email button */
+.close-button {
+  background-color: #ffdddd; /* Red color */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transition: background-color 0.3s ease; 
+  opacity: 0.6; /* Make it slightly transparent for discretion */
+}
+
+.close-button:hover {
+  background-color: #e60000; /* Darker red on hover */
+}
+
+
+/* Custom scrollbar styling */
+.message-body::-webkit-scrollbar {
+    width: 20px; /* Width of the scrollbar */
+}
+
+.message-body::-webkit-scrollbar-thumb {
+    background-color: #00bcd4; /* Color of the scrollbar thumb */
+    border-radius: 8px; /* Rounded corners for elegance */
+
+}
+
+.message-body::-webkit-scrollbar-thumb:hover {
+    background-color: #009ca4; /* Darker shade on hover */
+}
+
+.message-body::-webkit-scrollbar-track {
+
+    background: rgba(0, 0, 0, 0.03); /* Subtle track background */
+}
+
+
+.message-actions {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+}
+
+.message-actions button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  /*background: #4a90e2;*/
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.message-actions button:hover {
+  background: #3578b0;
+}
+
+.message-actions .reply {
+   background: #4a90e2;
+}
+.message-actions .forward {
+   background: #4a90e2;
+}
+
+.message-actions .archive {
+   background: #4a90e2 ;
+}
+
+
+
+
+.feature-box {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  /*width: 400px;*/
+  font-size: 0.9rem;
+  line-height: 1.4;
+  z-index: 1001; /* Ensures it's above the blurred background */
+}
+
+.feature-title {
+  text-align: center; /* Center the title */
+  font-weight: bold;
+  font-size: 1.2em; /* Slightly larger font for the title */
+  margin-bottom: 5px; /* Space between title and separator */
+}
+
+.feature-separator {
+  border: none; /* Remove default hr styles */
+  border-top: 1px solid #ccc; /* Add a custom line */
+  margin: 5px 0; /* Space around the line */
+}
+
+.feature-summary {
+  top: -20%;
+  left: calc(-30%); 
+  width: 25%;
+  /* transform: translateY(-50%);*/
+}
+
+.feature-actions {
+  top: -20%;
+  right: calc(-30%);
+  width: 25%;
+
+}
+
+
+.feature-box ul {
+  list-style: none;  /* Remove default list styling */
+  padding: 0;        /* Remove any default padding */
+}
+
+.feature-box li {
+  font-size: 0.9rem;
+  font-family: 'Arial', sans-serif;
+  margin: 10px 0;
+}
+
+.feature-box li a {
+  text-decoration: none;
+  color: #333; /* Dark text color for contrast */
+  display: flex;
+  align-items: center;
+}
+
+.feature-box li a:hover {
+  background-color: #f0f0f0; /* Light background on hover for interaction */
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.feature-box li a span {
+  margin-left: 10px; /* Space between the emoji and the text */
+}
+
+
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+
+/* Quick search bar container */
+/*.quick-search-container {
+  position: absolute;
+  top: 10px;
+  left: 30px;
+  max-width: 350px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}*/
+
+.quick-search-container {
+  position: fixed; /* Keeps the search visible as user scrolls */
+  top: 15px; /* Adjust position */
+  left: 17%;
+  z-index: 100; /* Keep it above other elements */
+  justify-content: center;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  color: #007bff; /* Accent color for the icon */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.search-icon:hover {
+  color: #0056b3; /* Darker shade on hover */
+}
+
+
+
+.quick-search-bar {
+  width: 100%; 
+  opacity: 0.5;
+  padding: 8px 35px 8px 15px; /* Room for the icon */
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.8);  /* Subtle background */
+  border: 1px solid #ddd;  /* Light border */
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  transition: background-color 0.3s ease, width 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
+}
+
+.quick-search-bar:focus {
+  opacity: 0.8;
+  background-color: #fff;  /* Change to white on focus */
+  border-color: #007bff; /* Accent border color */
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* Slightly stronger shadow on focus */
+}
+
+.quick-search-bar::placeholder {
+  color: #777; /* Subtle placeholder text color */
+}
+
+.quick-search-bar:focus::placeholder {
+  color: #007baa; /* Placeholder color changes when focused */
+}
+
+
+/* When focused */
+.quick-search-bar:focus {
+  background-color: #fff;  /* Change to white on focus */
+  border-color: #007bff; /* Accent border color */
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* Slightly stronger shadow on focus */
+  width: 550px; /* Focused width */
+}
+
+/* On hover, but only if it's not focused */
+.quick-search-container:hover .quick-search-bar:not(:focus) {
+  width: 250px;  /* Shrink when hovered and unfocused */
+}
+
+
+/* Snooze button */
+.email-snooze {
+  position: absolute; /* Position the button outside the box */
+  top: -10px; /* Moves the button above the box */
+  right: -10px; /* Moves it to the right edge */
+  font-size: 20px; /* Make the icon bigger */
+  background-color: #007bff; /* Make it stand out with a blue background */
+  color: white;
+  border-radius: 50%;
+  padding: 2px; /* Add some padding for a bigger button */
+  cursor: pointer;
+  z-index: 10; /* Ensure it stays on top */
+  transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+/* Hover effect to slightly scale the snooze button */
+.email-snooze:hover {
+  transform: scale(1.1);
+}
+
+/* Flex container for Compose Button and Category Tiles */
+.category-bar {
+  display: flex;
+  align-items: center; /* Vertically align items */
+  gap: 5px; /* Space between Compose Button and Tiles */
+  margin-bottom: 10px;
+}
+
+
+
+.compose-button {
+  /*position: fixed;
+  bottom: 20px;
+  right: 20px;*/
+  background-color: #008dff;
+  color: white;
+  font-size: 24px;
+  padding: 15px;
+  margin-left: 30px;
+  margin-right: 0px;
+  border-radius: 50%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.compose-button:hover {
+  background-color: #0066f3;
+  transform: scale(1.07); /* Slight zoom on hover */
+}
+
+
+/* Tile container */
+.category-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 20px;
+  justify-content: center; /* Center-align tiles */
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  width: 1300px; /* Set the width in pixels */
+  margin: 15px auto; /* Center-align the container */
+  max-width: 95%;
+  align-items: center; /* Align items (tiles and button) vertically */
+}
+
+/* Individual tiles */
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(145deg, #007bff, #0056b3); /* Default gradient */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex: 1 1 calc(20% - 20px); /* Responsive sizing */
+  text-align: center;
+  max-width: 150px;
+  min-width: 100px;
+}
+
+/* Hover and active states */
+.tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tile:active {
+  transform: scale(0.95);
+}
+
+/* Custom colors for each category */
+.tile[data-category="all"] {
+  background: linear-gradient(145deg, #6c757d, #495057);
+}
+
+.tile[data-category="meeting"] {
+  background: linear-gradient(145deg, #28a745, #1e7e34);
+}
+
+.tile[data-category="admin"] {
+  background: linear-gradient(145deg, #ffc107, #e0a800);
+}
+
+.tile[data-category="technical"] {
+  background: linear-gradient(145deg, #0074cc, #117a8b);
+}
+
+.tile[data-category="company"] {
+  background: linear-gradient(145deg, #7F00FF, #4F20AF);
+}
+
+.tile[data-category="newsletter"] {
+  background: linear-gradient(145deg, #fd7e14, #e4600e);
+}
+
+
+/* Specific Styling for "New Tag" Tile */
+.new-tag-tile {
+  background-color: #00bcd4; /* Cyan color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px; /* Ensure it's a perfect circle */
+  height: 40px;
+  margin-left: 10px; /* Space from tiles */
+  text-align: center;
+  font-size: 20px; /* Slightly larger '+' sign */
+  font-weight: bold;
+  color: #fff;
+  border-radius: 50%; /* Makes it circular */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer; /* Indicate interactivity */
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.new-tag-tile:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+  background-color: #0097a7; /* Darker cyan for hover effect */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* "+" Icon */
+.new-tag-tile .plus-icon {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+
+  </style>
+</head>
+<body>
+<video autoplay muted loop id="background-video">
+  <source src="background_house.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+
+
+<div class="page-container">
+
+
+<a href="https://mynoise.net/NoiseMachines/canadaQuebecForestSoundscape.php?l=27272727000000002727&a=1&am=s&title=For%C3%AAt%20Ouareau"
+   onclick="
+      const width = 500; 
+      const height = 480;
+      const left = (window.innerWidth - width) / 2 + window.screenX;  // Calculate the left position
+      const top = (window.innerHeight - height) / 2 + window.screenY; // Calculate the top position
+      const popup = window.open(
+         this.href, 
+         'popup', 
+         'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + 
+         ',toolbar=no,menubar=no,scrollbars=no,resizable=no,status=no'
+      );
+      if (popup) {
+         popup.document.body.style.opacity = '0.1'; // Reduce visibility
+         popup.blur(); // De-focus the popup
+		 window.focus();
+      }
+      return false;">🎶
+</a>
+
+<!--
+<a href="https://mynoise.net/NoiseMachines/canadaQuebecForestSoundscape.php?l=27272727000000002727&a=1&am=s&title=For%C3%AAt%20Ouareau" 
+   onclick="
+      const popup = window.open(
+         this.href, 
+         'popup', 
+         'width=500,height=480,toolbar=no,menubar=no,scrollbars=no,resizable=no,status=no,top=100,left=1000'
+      );
+      if (popup) { 
+         setTimeout(() => { window.focus(); }, 100); // Delay focus return to webmail
+      }
+      return false;">
+   🔊
+</a>
+-->
+
+<div class="quick-search-container">
+  <input type="text" class="quick-search-bar" id="quick-search" placeholder="Search or query..." />
+  <span class="search-icon" title="Search"><i class="fas fa-search"></i></span>
+</div>
+
+
+<div class="webmail-container">
+
+  <div class="category-bar">
+
+	<div class="compose-button" onclick="openComposeModal()" title="Compose new mail">✉️</div>
+
+	<div class="category-tiles">
+	  <div class="tile" data-category="all">None</div>
+	  <div class="tile" data-category="technical">Technical</div>
+	  <div class="tile" data-category="meeting">Meeting</div>
+	  <div class="tile" data-category="admin">Admin</div>
+	  <div class="tile" data-category="newsletter">Newsletter</div>
+	  <div class="tile" data-category="company">Company</div>
+	   <div class="category-tile new-tag-tile" onclick="openNewTagModal()" title="Define new category">
+		<span class="plus-icon">+</span>
+	  </div>
+	</div>
+	
+  </div>
+
+  <div class="email-list">
+
+    <!-- Technical Work Emails -->
+    <div class="email-item conversation technical" onclick="openMessage('messageModal')">
+	<div class="email-conversation-summary">
+			<div class="conversation-icon" title="system.admin@tech.com">
+			<span class="main-initial">S</span>
+			</div>
+		</div>
+      <span class="email-sender ">System Admin</span>
+      <span class="email-title">Server Maintenance Scheduled</span>
+      <span class="email-category technical">Technical</span>   
+      <span class="email-timestamp">1h</span>  
+	 <span class="email-flags" title="Important">⭐</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+
+
+    </div>
+    <div class="email-item conversation technical" onclick="openMessage('messageModalLong')">
+     	<div class="email-conversation-summary">
+			<div class="conversation-icon" title="Devops, Bob, Charlie">
+			<span class="main-initial">D</span>
+			<span class="participant-count">+2</span>
+			</div>
+		</div>
+      <span class="email-sender">Devops Mailing List</span>
+      <span class="email-title">Error Logs for Review</span>
+      <span class="email-category technical">Technical</span>
+      <span class="email-timestamp">3h</span>
+      <span class="email-flags" title="Unread">📩</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+
+    <!-- Meeting Emails -->
+   <div class="email-item meeting" onclick="openMessage('messageModal')">
+		<div class="email-conversation-summary">
+			<div class="conversation-icon" title="shr@tech.com">
+			<span class="main-initial">H</span>
+			</div>
+		</div>
+      <span class="email-sender ">HR Department</span>
+      <span class="email-title">Weekly All-Hands Meeting</span>
+      <span class="email-category meeting">Meeting</span>
+      <span class="email-timestamp">2d</span>
+      <span class="email-flags" title="Unanswered">💬</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+
+    <div class="email-item conversation meeting" onclick="openMessage('messageModal')">
+	<div class="email-conversation-summary">
+			<div class="conversation-icon" title="JohnSmith, arthur@other.com, Zoe Doe, +1 other">
+			<span class="main-initial">J</span>
+		<span class="participant-count">+4</span>
+			</div>
+		</div>
+      <span class="email-sender ">John Smith</span>
+      <span class="email-title">Project Kickoff Agenda</span>
+      <span class="email-category meeting">Meeting</span>
+      <span class="email-timestamp">30m</span>      <span class="email-flags" title="Follow-Up Required">🔔</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+
+    <!-- Administrative Emails -->
+    <div class="email-item conversation admin" onclick="openMessage('messageModal')">
+		<div class="email-conversation-summary">
+			<div class="conversation-icon" title="financedesk@tech.com, hr@tech.com">
+			<span class="main-initial">F</span>
+		<span class="participant-count">+1</span>
+			</div>
+		</div>
+      <span class="email-sender ">Travel Desk</span>
+      <span class="email-title">Submit Expense Reports</span>
+      <span class="email-category admin">Admin</span>
+      <span class="email-timestamp">5h</span>      <span class="email-flags" title="Pending Task">🕒</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+    <div class="email-item admin">
+	 	<div class="email-conversation-summary">
+			<div class="conversation-icon" title="travels@tech.com">
+			<span class="main-initial">T</span>
+			</div>
+		</div>
+      <span class="email-sender ">Booking Team</span>
+      <span class="email-title">Hotel Reservation Confirmation</span>
+      <span class="email-category admin">Admin</span>
+      <span class="email-timestamp">1d</span>
+      <span class="email-flags" title="Unread">📩</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+
+    <!-- Newsletter / Mailing List Emails -->
+    <div class="email-item newsletter">
+		<div class="email-conversation-summary">
+			<div class="conversation-icon" title="Tech@list.com">
+			<span class="main-initial">T</span>
+			</div>
+		</div>
+      <span class="email-sender ">Tech Insights</span>
+      <span class="email-title">5 Trends in AI for 2024</span>
+      <span class="email-category newsletter">Newsletter</span>
+      <span class="email-timestamp">4h</span>
+      <span class="email-flags" title="Read Later">📚</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+    <div class="email-item newsletter">
+	 	<div class="email-conversation-summary">
+			<div class="conversation-icon" title="comm@tech.com">
+			<span class="main-initial">C</span>
+			</div>
+		</div>
+      <span class="email-sender ">Company Updates</span>
+      <span class="email-title">Quarterly Results Released</span>
+      <span class="email-category newsletter">Newsletter</span>
+      <span class="email-timestamp">2d</span>
+      <span class="email-flags" title="Unimportant">🔕</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+
+    <!-- Out-of-the-box Emails -->
+    <div class="email-item conversation company">
+	<div class="email-conversation-summary">
+		<div class="conversation-icon" title="Alice, Bob, Charlie, +3 others">
+		<span class="main-initial">A</span>
+		<span class="participant-count">+5</span>
+		</div>
+	</div>
+      <span class="email-sender">alice.brown@mail.com</span>
+      <span class="email-title">Hello from Alice!</span>
+      <span class="email-category company">Company</span>
+      <span class="email-timestamp">15m</span>
+      <span class="email-flags" title="Unread">📩</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+    <div class="email-item company">
+	 	<div class="email-conversation-summary">
+			<div class="conversation-icon" title="ceo@tech.com">
+			<span class="main-initial">C</span>
+			</div>
+		</div>
+      <span class="email-sender">CEO</span>
+      <span class="email-title">Thank You for Your Contributions</span>
+      <span class="email-category company">Company</span>
+      <span class="email-timestamp">3d</span>
+      <span class="email-flags" title="Important">⭐</span>
+	 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!---  Mails  --->
+
+
+
+  <div class="message-modal" id="messageModal" style="display: none;">
+    <div class="message-header">Meeting Update</div>
+    <div class="message-meta">
+<div class="author">
+<span class="fromto">by</span>
+      <span class="author author-category-1"> John Doe</span>
+</div>
+     <div class="recipients">
+	<span class="fromto">to</span>
+      <span class="recipient recipient-category-1">Alice Smith</span>
+      <span class="recipient recipient-category-2">Bob Johnson</span>
+      <span class="recipient recipient-category-3">Charlie Lee</span>
+     </div>
+  <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
+    <button class="close-button" onclick="closeEmail('messageModal')" title="Close mail">❌</button>
+    </div>
+
+  <hr class="message-separator">
+    <div class="message-body">
+      Dear Team, <br><br>
+      Please be informed that our next meeting will be held tomorrow at 10:00 AM in the conference room. Let me know if you have any conflicts. <br><br>
+      Best regards,<br>
+      John
+    </div>
+    <div class="message-actions">
+      <button class="reply">Reply</button>
+      <button class="forward">Forward</button>
+      <button class="archive">Archive</button>
+    </div>
+    <div class="feature-box feature-summary">
+  <div class="feature-title">Summary</div>
+  <hr class="feature-separator">
+	<div>Team meeting scheduled for tomorrow at 10:00 AM.</div>
+    </div>
+    <div class="feature-box feature-actions">
+  <div class="feature-title">Quick links</div>
+  <hr class="feature-separator">
+  <ul>
+    <li><a href="#">📅 Add meeting to Calendar</a></li>
+    <li><a href="#">⏰ Remind me to reply todat before 4:00 PM</a></li>
+    <!--<li><a href="#">🔄 Follow-up client in 2 Days</a></li>-->
+    <li><a href="#">📨 Delegate to James for review.</a></li>
+    <!--<li><a href="#">⏳ Finish reviewing project by tomorrow morning</a></li>-->
+    <li><a href="#">⚡ Categorize as High-Priority for this Afternoon</a></li>
+    <!--<li><a href="#">🗓️ Review later during 'Admin Hour'</a></li>-->
+  </ul>
+    </div>
+  </div>
+
+
+
+
+  <div class="message-modal" id="messageModalLong" style="display: none;">
+    <div class="message-header">Meeting Update</div>
+    <div class="message-meta">
+<div class="author">
+<span class="fromto">by</span>
+      <span class="author author-category-1"> John Doe</span>
+</div>
+     <div class="recipients">
+	<span class="fromto">to</span>
+      <span class="recipient recipient-category-1">Alice Smith</span>
+      <span class="recipient recipient-category-2">Bob Johnson</span>
+      <span class="recipient recipient-category-3">Charlie Lee</span>
+     </div>
+  <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
+    <button class="close-button" onclick="closeEmail('messageModalLong')" title="Close mail">❌</button>
+    </div>
+
+  <hr class="message-separator">
+    <div class="message-body">
+      Dear Team, <br><br>
+     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.<br>
+
+Ut velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla sollicitudin. Fusce varius, ligula non tempus aliquam, nunc turpis ullamcorper nibh, in tempus sapien eros vitae ligula. Pellentesque rhoncus nunc et augue. Integer id felis. Curabitur aliquet pellentesque diam. Integer quis metus vitae elit lobortis egestas. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi vel erat non mauris convallis vehicula. Nulla et sapien. Integer tortor tellus, aliquam faucibus, convallis id, congue eu, quam. Mauris ullamcorper felis vitae erat. Proin feugiat, augue non elementum posuere, metus purus iaculis lectus, et tristique ligula justo vitae magna.<br>
+
+
+Aliquam convallis sollicitudin purus. Praesent aliquam, enim at fermentum mollis, ligula massa adipiscing nisl, ac euismod nibh nisl eu lectus. Fusce vulputate sem at sapien. Vivamus leo. Aliquam euismod libero eu enim. Nulla nec felis sed leo placerat imperdiet. Aenean suscipit nulla in justo. Suspendisse cursus rutrum augue. Nulla tincidunt tincidunt mi. Curabitur iaculis, lorem vel rhoncus faucibus, felis magna fermentum augue, et ultricies lacus lorem varius purus. Curabitur eu amet.<br><br>
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.<br>
+
+Ut velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla sollicitudin. Fusce varius, ligula non tempus aliquam, nunc turpis ullamcorper nibh, in tempus sapien eros vitae ligula. Pellentesque rhoncus nunc et augue. Integer id felis. Curabitur aliquet pellentesque diam. Integer quis metus vitae elit lobortis egestas. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi vel erat non mauris convallis vehicula. Nulla et sapien. Integer tortor tellus, aliquam faucibus, convallis id, congue eu, quam. Mauris ullamcorper felis vitae erat. Proin feugiat, augue non elementum posuere, metus purus iaculis lectus, et tristique ligula justo vitae magna.<br>
+
+
+Aliquam convallis sollicitudin purus. Praesent aliquam, enim at fermentum mollis, ligula massa adipiscing nisl, ac euismod nibh nisl eu lectus. Fusce vulputate sem at sapien. Vivamus leo. Aliquam euismod libero eu enim. Nulla nec felis sed leo placerat imperdiet. Aenean suscipit nulla in justo. Suspendisse cursus rutrum augue. Nulla tincidunt tincidunt mi. Curabitur iaculis, lorem vel rhoncus faucibus, felis magna fermentum augue, et ultricies lacus lorem varius purus. Curabitur eu amet.<br><br>
+
+      Best regards,<br>
+      John
+    </div>
+    <div class="message-actions">
+      <button class="reply">Reply</button>
+      <button class="forward">Forward</button>
+      <button class="archive">Archive</button>
+    </div>
+    <div class="feature-box feature-summary">
+  <div class="feature-title">Summary</div>
+  <hr class="feature-separator">
+	<div>Team meeting scheduled for tomorrow at 10:00 AM.</div>
+    </div>
+    <div class="feature-box feature-actions">
+  <div class="feature-title">Quick links</div>
+  <hr class="feature-separator">
+  <ul>
+    <li><a href="#">📅 Add meeting to Calendar</a></li>
+    <li><a href="#">⏰ Remind me to reply todat before 4:00 PM</a></li>
+    <!--<li><a href="#">🔄 Follow-up client in 2 Days</a></li>-->
+    <li><a href="#">📨 Delegate to James for review.</a></li>
+    <!--<li><a href="#">⏳ Finish reviewing project by tomorrow morning</a></li>-->
+    <li><a href="#">⚡ Categorize as High-Priority for this Afternoon</a></li>
+    <!--<li><a href="#">🗓️ Review later during 'Admin Hour'</a></li>-->
+  </ul>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+  <script>
+    function openMessage(id) {
+      document.querySelector('.webmail-container').classList.add('blur-background');
+      document.getElementById(id).style.display = 'block';
+    }
+
+     function closeEmail(id) {
+  	document.getElementById(id).style.display = "none";
+  	document.querySelector('.webmail-container').classList.remove("blur-background");
+}
+
+function speakMail() {
+  const mailContent = document.querySelector('.mail-body').innerText; // Get the mail content
+  console.log("Mail content to be spoken:", mailContent); // Debug log
+  
+  if (mailContent.trim() === "") {
+    console.log("No mail content found!"); // Ensure we are not trying to speak empty content
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(mailContent); // Create a speech utterance
+  utterance.lang = 'en-US'; // Set the language
+  
+  // Optionally adjust pitch, rate, or volume:
+  utterance.pitch = 1; // Range: 0 to 2
+  utterance.rate = 1; // Normal speaking rate
+  utterance.volume = 1; // Volume level from 0 to 1
+  
+  // Log to confirm we're triggering the speech synthesis
+  console.log("Speaking the content...");
+  
+  // Speak the text aloud
+  window.speechSynthesis.speak(utterance);
+}
+
+const letterColors = {
+  A: "#3498db", // Light Blue
+  B: "#2ecc71", // Green
+  C: "#9b59b6", // Purple
+  D: "#f1c40f", // Yellow
+  E: "#16a085", // Teal
+  F: "#34495e", // Dark Blue-Grey
+  G: "#1abc9c", // Aqua
+  H: "#2980b9", // Blue
+  I: "#8e44ad", // Dark Purple
+  J: "#f39c12", // Orange
+  K: "#27ae60", // Dark Green
+  L: "#bdc3c7", // Light Grey
+  M: "#7f8c8d", // Grey
+  N: "#95a5a6", // Soft Grey
+  O: "#2c3e50", // Dark Slate
+  P: "#e67e22", // Soft Orange
+  Q: "#d0e1f9", // Very Light Blue
+  R: "#3498db", // Light Blue
+  S: "#2ecc71", // Green
+  T: "#1abc9c", // Aqua
+  U: "#34495e", // Dark Blue-Grey
+  V: "#8e44ad", // Dark Purple
+  W: "#bdc3c7", // Light Grey
+  X: "#16a085", // Teal
+  Y: "#f1c40f", // Yellow
+  Z: "#7f8c8d"  // Grey
+};
+
+function assignCircleColor(iconElement) {
+  const initialElement = iconElement.querySelector(".main-initial");
+  const letter = initialElement.textContent.trim().toUpperCase();
+  const color = letterColors[letter] || "#007bff"; // Default color
+  iconElement.style.backgroundColor = color;
+}
+
+// Apply to all conversation-icon elements
+document.querySelectorAll(".conversation-icon").forEach(assignCircleColor);
+
+function filterEmails() {
+  const query = document.getElementById('searchBar').value.toLowerCase();
+  const emailItems = document.querySelectorAll('.email-item');
+
+  emailItems.forEach(item => {
+    const sender = item.querySelector('.email-sender').textContent.toLowerCase();
+    const title = item.querySelector('.email-title').textContent.toLowerCase();
+
+    if (sender.includes(query) || title.includes(query)) {
+      item.style.display = "block";
+    } else {
+      item.style.display = "none";
+    }
+  });
+}
+
+function snoozeEmail(event, snoozeButton) {
+
+  event.stopPropagation(); // Prevents the event from reaching the parent
+  const emailItem = snoozeButton.closest('.email-item');
+  emailItem.style.opacity = '0.5';
+  
+  
+  // alert("This email has been snoozed and will reappear later in 10 minutes");
+  
+  setTimeout(() => {
+    emailItem.style.opacity = '1';
+  }, 10000); // Snooze for 10 seconds as an example
+}
+
+
+
+
+
+document.querySelectorAll('.tile').forEach(tile => {
+  tile.addEventListener('click', () => {
+    const category = tile.getAttribute('data-category');
+    const currentText = tile.textContent.trim();
+
+    // Toggle text and mail visibility for the "All" tile
+    if (category === 'all') {
+      if (currentText === 'None') {
+        tile.textContent = 'All';
+        // Hide all emails
+        document.querySelectorAll('.email-item').forEach(email => {
+          email.style.display = 'none';
+        });
+      } else {
+        tile.textContent = 'None';
+        // Show all emails
+        document.querySelectorAll('.email-item').forEach(email => {
+          email.style.display = 'flex';
+        });
+      }
+    } else {
+      // Handle other category tiles
+      document.querySelectorAll('.email-item').forEach(email => {
+        if (email.classList.contains(category)) {
+          // Toggle visibility for the specific category
+          //email.style.display = email.style.display === 'none' ? 'flex' : 'none';        
+		email.style.display = 'flex';
+      } else {
+        email.style.display = 'none';
+      }
+      });
+    }
+  });
+});
+
+
+  </script>
+</body>
+</html>
+
+
+
+<!--
+
+Set a Reminder:
+
+"Remind me to reply tomorrow at 11:00 AM."
+"Set a reminder to follow up on this email in two days."
+"Remind me to respond to the client email after lunch."
+Set a Deadline:
+
+"Complete the report by 3:00 PM today."
+"Finish reviewing the attached document by tomorrow morning."
+"Finish the proposal by the end of the week."
+Categorize Email Tasks:
+
+"Move this task to the 'Admin' category."
+"Set this email as a high-priority task for this afternoon."
+"Schedule this email to be reviewed in 'technical work' at 2:00 PM."
+Delegate Tasks:
+
+"Forward this to Sarah for review and add a task for her to check it by Friday."
+"Assign this follow-up email to the team and remind them to respond by end of the day."
+Schedule an Event:
+
+"Add this meeting invitation to the calendar."
+"Schedule a meeting to discuss this project next Tuesday at 10:00 AM."
+"Send calendar invite for the follow-up meeting next week."
+Follow-Up:
+
+"Follow up with John about the proposal in 3 days."
+"Send a thank-you note after the meeting."
+"Ping the client if no response in 24 hours."
+Mark for Later Review:
+
+"Mark for later review during the 'Administrative hour' tomorrow."
+"Add to the 'Pending' list for tomorrow morning."
+"Review and respond by the end of the day."
+Link to External Tools:
+
+"Add this to the To-Do list app."
+"Create a task in the project management tool for follow-up."
+"Add this task to the task board for the design team."
+Tracking and Progress:
+
+"Set a task to track the status of this proposal every two days."
+
+
+-->
