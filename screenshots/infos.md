@@ -8,7 +8,7 @@
 
 <p align="center">
 Below is a screenshot of  the display of a single mail.
-  <img src="ScreenCapture_Message.jpg" alt="A single message" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+  <img src="DisplayMail.jpg" alt="A single message" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
 </p>
 
 
