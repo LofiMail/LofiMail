@@ -12,6 +12,13 @@ Below is a screenshot of  the display of a single mail.
 </p>
 
 
+
+<p align="center">
+Below is a screenshot of  the display of a sigle long mail.
+  <img src="DisplayLongMail.jpg" alt="A single long message" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+</p>
+
+
 <p align="center">
     You can filter out the mails, displaynig only the one from the considered category.
     <img src="WebMailSelection.jpg" alt="A single message" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
