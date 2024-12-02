@@ -39,6 +39,40 @@ body::after {
   z-index: -1; /* Ensures it's behind all content */
 }
 
+
+.music-button {
+            position:absolute;
+            display: inline-block;
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(135deg, #4caf50, #81c784); /* Gradient Green */
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            opacity:0.3;
+        }
+
+        .music-button:hover {
+            background: linear-gradient(135deg, #81c784, #4caf50); /* Inverse Gradient */
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            opacity:0.9;
+        }
+
+        .music-button:active {
+            transform: scale(1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+
+
+
 .page-container {
   display: flex;
   flex-direction: column; /* Stack elements vertically */
@@ -934,6 +968,67 @@ display: inline-block;
 }
 
 
+
+
+
+
+
+ .mantras {
+ 	    position: absolute;
+ 		top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+	    display: none;	
+            text-align: center;
+            max-width: 1200px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(255, 185, 40, 0.5);
+	    opacity: 0;            
+            animation: fadeInOut 30s infinite;	            
+            animation-delay: 8s; /* Staggered start */
+        }
+
+.mantras:hover {            
+     box-shadow: 0px 0px 25px rgba(255, 185, 40, 0.8);            
+     background: rgba(255, 255, 255, 0.3);
+     opacity: 0.5;	
+}
+
+        .mantra {
+            margin: 20px 0;
+            font-size: 1.8rem;
+            line-height: 1.8;
+            font-style: italic;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #003366; /* Deep Blue */            	
+	background: rgba(0, 51, 102, 0.1);
+		
+        }
+
+@keyframes fadeInOut {
+            0%,15%, 85%,100% {
+                opacity: 0; /* Hidden */
+            }
+            40%, 60% {
+                opacity: 0.9; /* Fully visible */
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
   </style>
 </head>
 <body>
@@ -947,7 +1042,7 @@ display: inline-block;
 <div class="page-container">
 
 
-<a href="https://mynoise.net/NoiseMachines/canadaQuebecForestSoundscape.php?l=27272727000000002727&a=1&am=s&title=For%C3%AAt%20Ouareau"
+<a class="music-button" href="https://mynoise.net/NoiseMachines/canadaQuebecForestSoundscape.php?l=27272727000000002727&a=1&am=s&title=For%C3%AAt%20Ouareau"
    onclick="
       const width = 500; 
       const height = 480;
@@ -1281,8 +1376,16 @@ Aliquam convallis sollicitudin purus. Praesent aliquam, enim at fermentum mollis
 
 
 
+ <div class="mantras" id="mantra">
+        <div class="mantra">
+            "Chaque jour, je suis davantage encourageant, énergique, enthousiaste, valorisant, et j'attire un entourage à l'image de ces énergies, avec bonheur et fluidité."
+        </div>
+</div>
 
 </div>
+
+
+
 
   <script>
     function openMessage(id) {
@@ -1405,12 +1508,15 @@ document.querySelectorAll('.tile').forEach(tile => {
         document.querySelectorAll('.email-item').forEach(email => {
           email.style.display = 'none';
         });
+	document.getElementById('mantra').style.display = 'block';
+	
       } else {
         tile.textContent = 'None';
         // Show all emails
         document.querySelectorAll('.email-item').forEach(email => {
           email.style.display = 'flex';
         });
+		document.getElementById('mantra').style.display = 'none';
       }
     } else {
       // Handle other category tiles
