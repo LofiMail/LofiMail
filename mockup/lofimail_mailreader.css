@@ -1,0 +1,358 @@
+
+.message-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%;
+  max-width: 1200px;
+	height: 700px;
+
+
+  background: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  border: 2px solid #000; /* Black border */
+  z-index: 1000;
+  animation: fadeIn 0.5s ease;
+
+}
+
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+
+
+
+.message-body {
+	padding: 20px;
+	line-height: 1.6;
+	color: #333;
+	overflow-y: auto; /* Adds vertical scrollbar */
+	height: 60%;
+	border-radius: 12px; /* Matches the parent container's border-radius */
+	clip-path: inset(0 round 12px); /* Ensures content, including scrollbar, stays within rounded edges */
+	margin-bottom: 50px;
+}
+
+
+    .blur-background {
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+.message-header {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  /*color: #4a90e2; A calm blue for the title */
+  font-family: 'Georgia', serif;
+  padding: 15px 5px 5px 5px;
+}
+
+/* Horizontal Line for Separation */
+.message-separator {
+  border: 0;
+  border-top: 2px solid #ddd; /* Light grey line */
+  margin: 15px 0;
+  width: 90%; /* Adjust width as needed */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.message-meta {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+
+}
+
+.message-meta .author {
+display: inline-block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff; /* Dark color for clarity */
+  font-family: 'Arial', sans-serif;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  padding: 3px 8px;
+
+}
+.message-meta .fromto {
+  font-size: 0.8rem;  font-style: italic;
+  color: #555; /* Dark color for clarity */
+
+}
+
+
+.message-meta .recipient {
+ display: inline-block;  /* Ensures recipients are on the same line */
+  font-size: 1rem;
+  font-style: italic;
+  color: #fff; /* White text for visibility */
+  font-family: 'Verdana', sans-serif;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+    .message-meta span {
+      margin: 0 5px;
+
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .message-meta .category-1 {
+      background: #ffebc5;
+      color: #c36a00;
+    }
+
+    .message-meta .category-2 {
+      background: #c5ffd2;
+      color: #007d3c;
+    }
+
+
+/* Style for the Close Email button */
+.close-button {
+  background-color: #ffdddd; /* Red color */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transition: background-color 0.3s ease;
+  opacity: 0.6; /* Make it slightly transparent for discretion */
+}
+
+.close-button:hover {
+  background-color: #e60000; /* Darker red on hover */
+}
+
+.voice-button {
+  background-color: #EEEEFF; /* Green background for voice button */
+ /* background-color: #EEEEFF; Green background for voice button */
+  /* background-color: #aaeeaa;*/
+  color: white;
+  border: none;
+  padding: 6px 12px; /* Reduced padding for a more discrete look */
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute; /* Absolute positioning within the .mail-header */
+  top: 10px; /* Adjust to position it away from the top */
+  right: 65px; /* Position it flush to the right */
+  opacity: 0.6; /* Make it slightly transparent for discretion */
+}
+
+.voice-button:hover {
+  background-color: #3578b0; Darker green when hovered */
+  /* background-color: #3578b0; /* Darker green when hovered */
+
+}
+
+.voice-button:focus {
+  outline: none;
+}
+
+
+
+
+/* Custom scrollbar styling */
+.message-body::-webkit-scrollbar {
+    width: 20px; /* Width of the scrollbar */
+}
+
+.message-body::-webkit-scrollbar-thumb {
+    background-color: #00bcd4; /* Color of the scrollbar thumb */
+    border-radius: 8px; /* Rounded corners for elegance */
+
+}
+
+.message-body::-webkit-scrollbar-thumb:hover {
+    background-color: #009ca4; /* Darker shade on hover */
+}
+
+.message-body::-webkit-scrollbar-track {
+
+    background: rgba(0, 0, 0, 0.03); /* Subtle track background */
+}
+
+
+
+
+.message-actions {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+}
+
+.message-actions button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  /*background: #4a90e2;*/
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.message-actions button:hover {
+  background: #3578b0;
+}
+
+.message-actions .reply {
+   background: #4a90e2;
+}
+.message-actions .forward {
+   background: #4a90e2;
+}
+
+.message-actions .archive {
+   background: #4a90e2 ;
+}
+
+
+
+
+
+.feature-box {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  /*width: 400px;*/
+  font-size: 0.9rem;
+  line-height: 1.4;
+  z-index: 1001; /* Ensures it's above the blurred background */
+}
+
+.feature-title {
+  text-align: center; /* Center the title */
+  font-weight: bold;
+  font-size: 1.2em; /* Slightly larger font for the title */
+  margin-bottom: 5px; /* Space between title and separator */
+}
+
+.feature-separator {
+  border: none; /* Remove default hr styles */
+  border-top: 1px solid #ccc; /* Add a custom line */
+  margin: 5px 0; /* Space around the line */
+}
+
+.feature-summary {
+  top: -20%;
+  left: calc(-30%);
+  width: 25%;
+  /* transform: translateY(-50%);*/
+}
+
+.feature-actions {
+  top: -20%;
+  right: calc(-30%);
+  width: 25%;
+
+}
+
+
+.feature-box ul {
+  list-style: none;  /* Remove default list styling */
+  padding: 0;        /* Remove any default padding */
+}
+
+.feature-box li {
+  font-size: 0.9rem;
+  font-family: 'Arial', sans-serif;
+  margin: 10px 0;
+}
+
+.feature-box li a {
+  text-decoration: none;
+  color: #333; /* Dark text color for contrast */
+  display: flex;
+  align-items: center;
+}
+
+.feature-box li a:hover {
+  background-color: #f0f0f0; /* Light background on hover for interaction */
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.feature-box li a span {
+  margin-left: 10px; /* Space between the emoji and the text */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Categories with different background colors */
+.author-category-1 {
+  background-color: #FFAA00; /* Amber */
+}
+
+.author-category-2 {
+  background-color: #e94e77; /* Pink for category 2 */
+}
+
+.author-category-3 {
+  background-color: #f5a623; /* Orange for category 3 */
+}
+
+.author-category-4 {
+  background-color: #7ed321; /* Green for category 4 */
+}
+
+/* Categories for recipients with different background colors */
+.recipient-category-1 {
+
+  background-color: #80C342; /* Apple Green */
+}
+
+.recipient-category-2 {
+
+  background-color: #FF5C8A; /* Coral Pink */
+}
+
+.recipient-category-3 {
+
+  background-color: #FF7F50; /* Tangerine */
+}
+
+.recipient-category-4 {
+
+  background-color: #7F00FF; /* Electric Violet */
+}
