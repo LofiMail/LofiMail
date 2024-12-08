@@ -2,18 +2,18 @@ import imaplib
 import email
 from email.header import decode_header
 
-from tohtml import generate_email_html, generate_email_modal
+from src.tools.tohtml import generate_email_html, generate_email_modal
 
 # Account credentials
-username = "username"  # Replace with your email address
+email = "email"  # Replace with your email address
 password = "ipassword"  # Replace with your LDAP password
 imap_server = "imap.company.fr"  # Replace with your IMAP server address
 
 
-def mailconnect():
+def mailconnect(email,password,imap_server):
     # IMAP connection and email retrieval (simplified for context)
     mail = imaplib.IMAP4_SSL(imap_server)
-    mail.login(username, password)
+    mail.login(email, password)
     print("Logged in successfully.")
     mail.select("inbox")
     return mail
@@ -88,7 +88,7 @@ def displaymails(mail, email_ids):
 if __name__ == '__main__':
     try:
         # Connect to the server and log in
-        mail = mailconnect()
+        mail = mailconnect(email,password,imap_server)
 
         # Search for all emails
         # status, messages = mail.search(None, "ALL")

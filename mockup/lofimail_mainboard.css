@@ -3,14 +3,29 @@ body {
   margin: 0;
   padding: 0;
   width: 100vw;
-  /* height: 100vh; */
-   background: linear-gradient(135deg, #e0eafc, #cfdef3);
+  /*height: 100vh;*/
+  /*background: linear-gradient(135deg, #e0eafc, #cfdef3);*/
+  background-color: rgba(224, 234, 252, 1); /*rgba(0, 0, 0, 0.8); Adjust opacity */
+  /*background: black;*/
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
+  animation: blurIn 1.5s ease-in-out;
+  animation-fill-mode: forwards;
+}
+/* Global blur animation */
+@keyframes blurIn {
+  0% {
+    filter: blur(20px) brightness(5%);
+    opacity: 0;
+  }
+  100% {
+    filter: blur(0) brightness(100%);
+    opacity: 1;
+  }
+}
 
 
 
@@ -18,7 +33,8 @@ body {
 .page-container {
   display: flex;
   flex-direction: column; /* Stack elements vertically */
-  width: 100%; /* Ensure full-page width */
+  width: 100vw; /* Ensure full-page width */
+  height: 100vh;
 }
 
 .webmail-container {
@@ -623,12 +639,24 @@ body::after {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw; /* Ensure it spans the full viewport width */
+  height: 100vh; /* Ensure it spans the full viewport height */
   object-fit: cover;
   z-index: -1; /* Ensures it's behind all content */
-}
+  /*background: linear-gradient(135deg, #e0eafc, #cfdef3); Matches body background */
+  opacity: 0; /* Start hidden */
+  animation: videoFadeIn 1.5s ease-in-out 0.5s forwards; /* Smooth fade-in */
 
+}
+/* Keyframe for fade-in */
+@keyframes videoFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 
 
 .music-button {

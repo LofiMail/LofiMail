@@ -1,6 +1,6 @@
 from email.utils import parseaddr, parsedate_to_datetime
 from datetime import datetime
-from decode import decode_mime_text
+from src.tools.decode import decode_mime_text
 
 import pytz
 
