@@ -1,7 +1,7 @@
 <p align="center">
 Video demonstration
 
-   [Link to the video](DemoMockup.mp4)
+   ![Link to the video](DemoMockup.mp4)
 
 </p>
 
