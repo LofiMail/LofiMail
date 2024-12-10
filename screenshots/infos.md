@@ -1,18 +1,9 @@
 <p align="center">
   
 Video demonstration: DemoMockup.mp4
-
-<video autoplay>
-    <source src="DemoMockup.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
 </p>
 
 
-
-<p align="center">
-DemoMockup.mp4
-</p>
 
 <p align="center">
 <video autoplay>
@@ -20,6 +11,7 @@ DemoMockup.mp4
     Your browser does not support the video tag.
 </video>
 </p>
+
 
 
 <p align="center">
