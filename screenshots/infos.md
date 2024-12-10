@@ -1,4 +1,11 @@
-
+<p align="center">
+  
+Video demonstration:
+<video autoplay>
+    <source src="DemoMockup.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+</p>
 
 <p align="center">
   Below is a screenshot of the  list of mails.
