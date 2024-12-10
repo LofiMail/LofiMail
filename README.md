@@ -8,7 +8,7 @@ Welcome to **LofiMail**, an open-source webmail application dedicated to creatin
 Featuring a modern, uncluttered design, colorful visual cues and integrated also sound features, it ensures every interaction is intuitive and engaging.
 Our mission is to deliver an intuitive email experience while fostering a global community of developers, designers, and enthusiasts.
 
-You may check this [video demonstration](https://youtu.be/4-Ji2pt2hFo)  to see a mockup of the LofiMail interface.
+You may check this [video demonstration](https://youtu.be/9gQCQIe9RUc)  to see a mockup of the LofiMail interface.
 
 
 <p align="center">
