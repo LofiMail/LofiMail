@@ -1,6 +1,6 @@
 <p align="center">
   
-Video demonstration:
+Video demonstration: DemoMockup.mp4
 
 <video autoplay>
     <source src="DemoMockup.mp4" type="video/mp4">
