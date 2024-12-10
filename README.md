@@ -9,6 +9,8 @@ Featuring a modern, uncluttered design, colorful visual cues and integrated also
 Our mission is to deliver an intuitive email experience while fostering a global community of developers, designers, and enthusiasts.
 
 
+![Demo](https://github.com/LofiMail/LofiMail/blob/main/screenshots/DemoMockup.mp4)
+
 <p align="center">
   <img src="screenshots/WebMailSelection.jpg" alt="Selection of mails" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
 </p>
