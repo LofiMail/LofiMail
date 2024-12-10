@@ -1,9 +1,7 @@
-<p align="center">
-Video demonstration
+- Video demonstration
 
-   ![Link to the video](https://github.com/LofiMail/LofiMail/blob/main/screenshots/DemoMockup.mp4)
+   ![Link to the video](https://github.com/LofiMail/LofiMail/blob/main/screenshots/VideoDemoMockup.mp4)
 
-</p>
 
 
 
