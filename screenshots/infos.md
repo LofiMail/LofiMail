@@ -1,6 +1,8 @@
 <p align="center">
-  
-Video demonstration: DemoMockup.mp4
+Video demonstration
+
+   [Link to the video](DemoMockup.mp4)
+
 </p>
 
 
