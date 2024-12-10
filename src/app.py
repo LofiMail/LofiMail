@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('mockup_login.html')  # Render your login form template
+    return render_template('login.html')  # Render your login form template
 
 @app.route('/login', methods=['POST'])
 def connect_mail():
@@ -32,7 +32,7 @@ def connect_mail():
         # Handle errors and return failure response
         print(f"Error: {e}")
         print(jsonify({'status': 'error', 'message': str(e)}))
-        return render_template('lofimail.html', mails=mail)
+        return render_template('login.html')
 
 
 

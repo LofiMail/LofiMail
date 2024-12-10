@@ -8,6 +8,20 @@ Video demonstration: DemoMockup.mp4
 </video>
 </p>
 
+
+
+<p align="center">
+DemoMockup.mp4
+</p>
+
+<p align="center">
+<video autoplay>
+    <source src="DemoMockup.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+</p>
+
+
 <p align="center">
   Below is a screenshot of the  list of mails.
   <img src="Mail_List.jpg" alt="Display of mails" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
