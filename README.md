@@ -21,13 +21,13 @@ You may check this [video demonstration](https://youtu.be/9gQCQIe9RUc)  to see a
 
 ## 🌟 **Why LofiMail?**
 
-- **🚀 Sleek and Modern Design**: Enjoy a clean, responsive UI designed for productivity.  
-- **🤝 Community-Driven**: Built by contributors from all over the world.  
-- **🔓 100% Open Source**: Transparent, free to use, and free to improve.  
-- **🌍 Non-Profit Vision**: Focused on empowering users, not monetizing them.  
+- **💫 A Joyful Workspace**: Spend hours each day with a webmail that brings you calm, comfort, and a touch of beauty. LofiMail is designed to be more than a tool—it’s a space that lifts your mood, inspires creativity, and brings a smile to your face.  
+- **🎨 Cozy and Appealing Design**: From soothing colors to gentle animations, every detail is crafted to create a cozy, inviting environment.  
+- **🤝 Community-Crafted**: Built by a passionate global community that shares a vision of joy in the workplace.  
+- **🔓 100% Open Source**: Transparent, free to use, and open to contributions from all who believe in a happier way to work.  
+- **🌍 A Non-Profit Mission**: Focused on empowering users and enriching their experience—not monetizing them.  
 
-Join us to craft the future of email management!
-
+Join us in transforming email management into something delightful, energizing, and truly yours!
 
 
 <p align="center">
@@ -38,11 +38,17 @@ Join us to craft the future of email management!
 
 ## 📋 **Features**
 
-- **Quick Search**: Discrete, fast, and powerful search functionality.  
-- **Category Tiles**: Filter emails with visually stunning tag tiles. 
-- **Customizable Themes**: Personalize your webmail interface.   
-- **Email Snoozing**: Manage your inbox your way.  
-- **Collaborative Enhancements**: Suggest new features or integrations!
+
+- **🎭 Versatile Views**: Switch between list, tile, or other display modes to match your workflow and preferences—even listen to your emails for hands-free management.  
+- **🧠 Smart Categorization**: Emails are automatically sorted into user-defined categories, with AI suggesting new categories and enhancing organization.  
+- **📝 AI Summaries & Suggestions**: Get concise summaries of emails and actionable suggestions, such as creating tasks or setting reminders, to keep you on top of things.  
+- **⏳ Intelligent Snoozing**: Customize when emails appear based on your focus times. Prioritize work emails in the morning, admin emails later—your inbox, your schedule.  
+- **👥 Enhanced Contact Management**: Automatically sort contacts by frequency, context, or other criteria, making it easy to find and manage your most important relationships.  
+- **🎨 Customizable Themes**: Make your webmail yours with themes that match your mood or style.  
+- **♿ Accessibility First**: Features designed for inclusivity, including dyslexia-friendly modes and more.  
+- **🔍 Quick Search**: Experience a discrete, fast, and intuitive search functionality that helps you find emails, contacts, or attachments instantly—even with partial or vague queries.
+- **🥚 Easter Eggs**: Delightful surprises hidden throughout—because work should have moments of joy.  
+- **📈 Always Evolving**: A platform shaped by community feedback—suggest new features, and let’s build the future of webmail together!  
 
 ---
 
@@ -68,10 +74,10 @@ Check out the [Contributing Guide](CONTRIBUTING.md) for detailed instructions.
 
 ## 🌍 **Join the Community**
 
-- **GitHub Discussions**: Share ideas and collaborate.  
-- **Slack Channel**: Real-time chats with contributors.  
-- **Twitter**: Follow us for updates!  
-- **Weekly Stand-Ups**: Join our virtual calls to discuss progress.
+- **GitHub Discussions**: Share your ideas, report issues, and collaborate with fellow contributors.  
+- **Discord Server**: Join our vibrant community for real-time discussions, support, and engaging events.  
+- **Virtual Meetups**: Participate in regular video calls to connect with contributors, exchange ideas, and discuss progress.  
+- **Monthly Stand-Ups**: Join our collaborative sessions to align on development goals and celebrate milestones.  
 
 ---
 
@@ -85,6 +91,7 @@ LofiMail is licensed under the [MIT License](LICENSE), ensuring the freedom to u
 
 We’re building a bright future for Mailflow. Here’s what’s next:
 
+- **Improving the todo-list management and process**
 - **Implementation from  mockup**  
 - **Integration with IMAP/SMTP servers**  
 
