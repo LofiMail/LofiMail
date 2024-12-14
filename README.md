@@ -2,6 +2,10 @@
 
 # **LofiMail: Open-Source Webmail Redefined**
 
+<p align="center">
+  <img src="lofimaillogo1.png" alt="LofiMail" style="width: 40%; height: auto; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);">
+</p>
+
 ### ✨ **Beautiful. Collaborative. Non-Profit.**
 
 Welcome to **LofiMail**, an open-source webmail application dedicated to creating a modern, elegant, and accessible webmail application. 
