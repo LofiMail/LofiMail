@@ -3,6 +3,22 @@ function openMessage(id) {
     document.getElementById(id).style.display = 'block';
 }
 
+function fetchAndShowEmailContent(emailId) {
+    // Make an AJAX request to fetch the email content
+    fetch(`/get-email-content/${emailId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Insert the fetched email content into the modal
+            const modal = document.getElementById('messageModal');
+            modal.innerHTML = data.html;
+
+            // Display the modal
+            document.querySelector('.webmail-container').classList.add('blur-background');
+            modal.style.display = 'block';
+        })
+        .catch(error => console.error('Error fetching email content:', error));
+}
+
 function closeEmail(id) {
     document.getElementById(id).style.display = "none";
     document.querySelector('.webmail-container').classList.remove("blur-background");

@@ -3,6 +3,7 @@ function openMessage(id) {
     document.getElementById(id).style.display = 'block';
 }
 
+
 function closeEmail(id) {
     document.getElementById(id).style.display = "none";
     document.querySelector('.webmail-container').classList.remove("blur-background");

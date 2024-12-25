@@ -85,14 +85,11 @@
         </div>
 
         <div class="email-list">
+            {% for mail in mails %}
+              {{ mail |safe }}
+            {% endfor %}
 
-             <div class="mail-container">
-                    <ul>
-                        {% for mail in mails %}
-                        <li>{{ mail }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+
 
             <!-- Technical Work Emails -->
             <div class="email-item conversation technical" onclick="openMessage('messageModal')">

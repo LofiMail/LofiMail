@@ -3,10 +3,11 @@ from datetime import datetime
 from src.tools.decode import decode_mime_text
 
 import pytz
+import html
 
 
 # Function to generate HTML for an email
-def generate_email_html(email_data, current_email):
+def generate_email_html(email_id,email_data, current_email):
     # Extract email details
     sender = email_data["From"]
     sender_email = parseaddr(sender)[1]  # Extract the email address
@@ -47,23 +48,40 @@ def generate_email_html(email_data, current_email):
     # Extract the main initial from the sender's name or email
     main_initial = sender_email[0].upper() if sender_email else "?"
 
+    category = "technical"
+    category_name = "Technical"
+
+    participant_title = html.escape(participant_title)
+    main_initial = html.escape(main_initial)
+    sender_email = html.escape(sender_email)
+    title = html.escape(title)
+
+    participant_count_html = ""
+    if participant_count>1:
+        participant_count_html = f"""<span class="participant-count">+{participant_count - 1}</span>"""
+
+    # onclick="openMessage('messageModal')"
     # Generate the HTML
-    html = f"""
-    <div class="email-item conversation meeting" onclick="openMessage()">
-        <span class="email-sender">{sender_email}</span>
-        <span class="email-title">{title}</span>
-        <span class="email-timestamp">{time_display}</span>
-        <div class="email-conversation-summary">
-            <div class="conversation-icon" title="{participant_title}">
-                <span class="main-initial">{main_initial}</span>
-                <span class="participant-count">+{participant_count - 1}</span>
-            </div>
-        </div>
+    html_code = f"""
+    <div class="email-item conversation {category}" onclick="fetchAndShowEmailContent('{ email_id.decode('utf-8')  }')">
+                <div class="email-conversation-summary">
+                    <div class="conversation-icon" title="{participant_title}">
+                        <span class="main-initial">{main_initial}</span>
+                        {participant_count_html}
+                    </div>
+                </div>
+                <span class="email-sender ">{sender_email}</span>
+                <span class="email-title">{title}</span>
+                <span class="email-category {category}">{category_name}</span>
+                <span class="email-timestamp">{time_display}</span>
+                <span class="email-flags" title="Important">⭐</span>
+                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
     </div>
     """
-    return html
+    return html_code
 
 
+import email, re
 def generate_email_modal(mail, email_id):
     """
     Generate an HTML modal for an email's content.
@@ -75,6 +93,7 @@ def generate_email_modal(mail, email_id):
     Returns:
     - HTML string of the email modal.
     """
+    print("Generate Email Modal",mail,email_id)
     # Fetch the email by ID
     status, data = mail.fetch(email_id, "(RFC822)")
     if status != "OK":
@@ -118,7 +137,6 @@ def generate_email_modal(mail, email_id):
 
     # Generate HTML
     html = f"""
-    <div class="message-modal" id="messageModal" style="display: none;">
         <div class="message-header">{title}</div> 
         <div class="message-meta">
             <div class="author">
@@ -158,9 +176,6 @@ def generate_email_modal(mail, email_id):
           </ul>
     </div>
   </div>
-
-
-    </div>
     """
     return html
 

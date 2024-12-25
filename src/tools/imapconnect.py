@@ -4,10 +4,6 @@ from email.header import decode_header
 
 from src.tools.tohtml import generate_email_html, generate_email_modal
 
-# Account credentials
-email = "email"  # Replace with your email address
-password = "ipassword"  # Replace with your LDAP password
-imap_server = "imap.company.fr"  # Replace with your IMAP server address
 
 
 def mailconnect(email,password,imap_server):
@@ -20,7 +16,8 @@ def mailconnect(email,password,imap_server):
 
 
 
-def htmlmails(mail, email_ids):
+def htmlmails(mail, email_ids,myemail="your_email@example.com"):
+    mails_html = []
     for email_id in email_ids:
         status, msg_data = mail.fetch(email_id, "(RFC822)")
         for response_part in msg_data:
@@ -36,8 +33,10 @@ def htmlmails(mail, email_ids):
                 }
                 print("Ok")
                 # Generate the HTML for the email
-                html = generate_email_html(email_data, "your_email@example.com")
+                html = generate_email_html(email_id,email_data, myemail)
                 print(html)
+                mails_html.append(html)
+    return mails_html
 
 
 def displaymails(mail, email_ids):
@@ -87,8 +86,14 @@ def displaymails(mail, email_ids):
 
 if __name__ == '__main__':
     try:
+
+        # Account credentials
+        # email_address = "email"  # Replace with your email address
+        # password = "ipassword"  # Replace with your LDAP password
+        # imap_server = "imap.company.fr"  # Replace with your IMAP server address
+
         # Connect to the server and log in
-        mail = mailconnect(email,password,imap_server)
+        mail = mailconnect(email_address,password,imap_server)
 
         # Search for all emails
         # status, messages = mail.search(None, "ALL")
@@ -108,6 +113,26 @@ if __name__ == '__main__':
 
         # Close the connection and logout
         mail.logout()
+
+
+        ###################
+        # Check for mails after 5000:
+        last_processed_uid = "5000"  # Replace with the last stored UID
+
+        # Search for new emails with UID greater than the last processed
+        status, messages = mail.uid("SEARCH", f"UID {last_processed_uid}:*")
+        new_email_uids = messages[0].split()
+
+        # Update last_processed_uid to the newest UID
+        if new_email_uids:
+            last_processed_uid = new_email_uids[-1].decode()
+            print(f"Updated last UID to: {last_processed_uid}")
+
+        # Fetch and process the new emails
+        for uid in new_email_uids:
+            status, data = mail.uid("FETCH", uid, "(RFC822)")
+            email_message = email.message_from_bytes(data[0][1])
+            # Process the email
 
     except Exception as e:
         print(f"An error occurred: {e}")
