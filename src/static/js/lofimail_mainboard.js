@@ -123,6 +123,7 @@ document.querySelectorAll('.tile').forEach(tile => {
 		document.getElementById('mantra').style.display = 'none';
       }
     } else {
+	  document.getElementById('mantra').style.display = 'none';
       // Handle other category tiles
       document.querySelectorAll('.email-item').forEach(email => {
         if (email.classList.contains(category)) {

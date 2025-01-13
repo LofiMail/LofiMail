@@ -47,6 +47,23 @@ body {
   /*background-color: #f7f9fc;*/
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+	overflow-y: auto; /* Adds vertical scrollbar */
+}
+
+
+
+/* Custom scrollbar styling */
+.webmail-container::-webkit-scrollbar {
+    width: 20px; /* Width of the scrollbar */
+}
+.webmail-container::-webkit-scrollbar-thumb {
+    background-color: #00bcd4; /* Color of the scrollbar thumb */
+    border-radius: 8px; /* Rounded corners for elegance */
+
+}
+.webmail-container::-webkit-scrollbar-thumb:hover {
+    background-color: #009ca4; /* Darker shade on hover */
 }
 
 .email-list {
@@ -703,17 +720,17 @@ body::after {
             padding: 30px;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 15px;
-            box-shadow: 0px 0px 20px rgba(255, 185, 40, 0.5);
+            box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.5);
 	    opacity: 0;
             animation: fadeInOut 30s infinite;
             animation-delay: 8s; /* Staggered start */
         }
-
+/*
 .mantras:hover {
      box-shadow: 0px 0px 25px rgba(255, 185, 40, 0.8);
      background: rgba(255, 255, 255, 0.3);
      opacity: 0.5;
-}
+}*/
 
 
         .mantra {

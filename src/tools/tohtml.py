@@ -1,12 +1,131 @@
 from email.utils import parseaddr, parsedate_to_datetime
 from datetime import datetime
 from src.tools.decode import decode_mime_text
+from src.tools.processmail import summarize_body
+
 
 import pytz
 import html
 
 
+
+from html import escape
+def convert_text_to_html(text):
+    # Escape any existing HTML entities to prevent rendering issues
+    escaped_text = escape(text)
+
+    # Regex to find URLs
+    url_pattern = r'(https?://[^\s]+)'
+
+    # Replace URLs with clickable HTML links
+    html_text = re.sub(url_pattern, r'<a href="\1" target="_blank">\1</a>', escaped_text)
+
+    html_text=re.sub(r"\r?\n", "<br>", html_text.strip())
+
+    # Add simple <p> tags for formatting
+    return f"<p>{html_text}</p>"
+
+def db_email_to_html(email,selfmail=""):
+
+    id = email.id
+    email_id= email.email_id
+    sender = email.sender
+    date_received = email.date_received
+    subject = email.subject
+    body = email.body
+    summary= email.summary
+    is_read= email.is_read
+    parent_email_id= email.parent_email_id
+    created_at = email.created_at
+    # recipients
+    recipients = email.recipients
+    # tags
+    # actions
+
+
+
+
+    print("email_id:",email_id)
+    title = decode_mime_text(subject)
+
+    print("Title:",title)
+
+    sender_email = parseaddr(sender)[1]  # Extract the email address
+    print("sender_email:",sender_email)
+    # Extract the main initial from the sender's name or email
+    main_initial = sender_email[0].upper() if sender_email else "?"
+    print("main_initial:",main_initial)
+
+
+
+    print("date_received",date_received)
+    if date_received.tzinfo is None:
+        # If the received_time is naive, localize it to UTC
+        date_received = pytz.utc.localize(date_received)
+    # Decode time:
+    now_time = datetime.now(pytz.utc)
+    #received_time = parsedate_to_datetime(date_received).astimezone(pytz.utc)
+    time_diff = now_time - date_received
+    print(time_diff)
+    if time_diff.days > 0:
+        time_display = f"{time_diff.days}d"
+    elif time_diff.seconds > 3600:
+        time_display = f"{time_diff.seconds // 3600}h"
+    else:
+        time_display = f"{time_diff.seconds // 60}m"
+
+
+    print("time_display:",time_display)
+
+
+    participants = [decode_mime_text(recipient.recipient) for recipient in recipients]
+    participants = [p for p in participants if p != "None" and p != selfmail]
+
+    participant_count = len(participants)
+    print("participant_count:",participant_count)
+
+    if participant_count > 3:
+        participant_title = ", ".join(participants[:3])  # Limit to the first 3 names for the title
+        participant_title += f", +{participant_count - 3} other(s)"
+    else:
+        participant_title = ", ".join(participants)
+
+
+    print("participant_title:", participant_title)
+
+    participant_count_html = ""
+    if participant_count > 0:
+        participant_count_html = f"""<span class="participant-count">+{participant_count}</span>"""
+
+    participant_title = html.escape(participant_title)
+    main_initial = html.escape(main_initial)
+    sender_email = html.escape(sender_email)
+    title = html.escape(title)
+
+    #TODO: This is a stub. For later: compute some category automatically based on analysis of email content + recipients.
+    category = "technical"
+    category_name = "Technical"
+
+    html_code = f"""
+        <div class="email-item conversation {category}" onclick="fetchAndShowEmailContent('{email_id}')">
+                    <div class="email-conversation-summary">
+                        <div class="conversation-icon" title="{participant_title}">
+                            <span class="main-initial">{main_initial}</span>
+                            {participant_count_html}
+                        </div>
+                    </div>
+                    <span class="email-sender ">{sender_email}</span>
+                    <span class="email-title">{title}</span>
+                    <span class="email-category {category}">{category_name}</span>
+                    <span class="email-timestamp">{time_display}</span>
+                    <span class="email-flags" title="Important">⭐</span>
+                    <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+        </div>
+        """
+    return html_code
+
 # Function to generate HTML for an email
+# DEPRECATED
 def generate_email_html(email_id,email_data, current_email):
     # Extract email details
     sender = email_data["From"]
@@ -16,13 +135,6 @@ def generate_email_html(email_id,email_data, current_email):
     title = decode_mime_text(encoded_title)
 
     timestamp = email_data["Date"]
-    participants = email_data["To"]
-    if "Cc" in email_data:
-        if email_data["Cc"]:
-            for e in email_data["Cc"]:
-                participants += ", " + e
-    participants = decode_mime_text(participants)
-    # print(participants)
     # Format the timestamp
     now_time = datetime.now(pytz.utc)
     received_time = parsedate_to_datetime(timestamp)
@@ -35,7 +147,15 @@ def generate_email_html(email_id,email_data, current_email):
         time_display = f"{time_diff.seconds // 3600}h"
     else:
         time_display = f"{time_diff.seconds // 60}m"
+    participants = email_data["To"]
+    if "Cc" in email_data:
+        if email_data["Cc"]:
+            for e in email_data["Cc"]:
+                participants += ", " + e
 
+
+    participants = decode_mime_text(participants)
+    # print(participants)
     # Generate the participant details
     all_recipients = [
         addr for addr in [r.strip() for r in participants.split(",")] if addr and addr != current_email
@@ -82,6 +202,107 @@ def generate_email_html(email_id,email_data, current_email):
 
 
 import email, re
+
+
+
+def db_email_to_modalhtml(email,selfmail=""):
+
+    id = email.id
+    email_id= email.email_id
+    sender = email.sender
+    date_received = email.date_received
+    subject = email.subject
+    body = email.body
+    summary= email.summary
+    is_read= email.is_read
+    parent_email_id= email.parent_email_id
+    created_at = email.created_at
+    # recipients
+    recipients = email.recipients
+    # tags
+    # actions
+
+
+
+
+    print("email_id:",email_id)
+    title = decode_mime_text(subject)
+
+
+    sender_name, sender_email = parseaddr(sender)
+    sender_name = decode_mime_text(sender_name) or sender_email
+
+
+    # Recipients
+    recipient_list = [parseaddr(recipient.recipient) for recipient in recipients]
+    recipient_html = ''.join(
+        f'<span class="recipient recipient-category-{(i + 1) % 5}">{decode_mime_text(name) or _email}</span>\n'
+        for i, (name, _email) in enumerate(recipient_list) if (decode_mime_text(name) or _email) != "None"
+    )
+
+
+
+    # Extract email body
+    print("BODY:", body)
+    body_summary = summarize_body(body)
+
+
+    # Clean the body (convert line breaks to HTML-friendly <br>)
+    body_html = re.sub(r"\r?\n", "<br>", body.strip())
+
+
+    # Clean the body (convert line breaks to HTML-friendly <br>)
+    body_summary_html = convert_text_to_html(body_summary)
+
+
+
+
+    # Generate HTML
+    html = f"""
+            <div class="message-header">{title}</div> 
+            <div class="message-meta">
+                <div class="author">
+                    <span class="fromto">by</span>
+                    <span class="author author-category-1">{sender_name}</span>
+                </div>
+                <div class="recipients">
+                    <span class="fromto">to</span>
+                    {recipient_html}
+                </div>  
+                <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
+                <button class="close-button" onclick="closeEmail('messageModal')" title="Close mail">❌</button>
+            </div>
+            <hr class="message-separator">
+            <div class="message-body">{body_html}</div>
+            <div class="message-actions">
+                <button class="reply">Reply</button>
+                <button class="forward">Forward</button>
+                <button class="archive">Archive</button>
+            </div>
+            <div class="feature-box feature-summary">
+                <div class="feature-title">Summary</div>
+                <hr class="feature-separator">
+    	        <div>{body_summary_html}</div>
+            </div>
+            <div class="feature-box feature-actions">
+              <div class="feature-title">Quick links</div>
+              <hr class="feature-separator">
+              <ul>
+                <li><a href="#">📅 Add meeting to Calendar</a></li>
+                <li><a href="#">⏰ Remind me to reply tomorrow at 11:00 AM</a></li>
+                <li><a href="#">🔄 Follow-up client in 2 Days</a></li>
+                <li><a href="#">📨 Delegate to Sarah for review and add a task for her to check it by Friday</a></li>
+                <li><a href="#">⏳ Finish Reviewing by Tomorrow Morning</a></li>
+                <li><a href="#">⚡ Categorize as High-Priority for this Afternoon</a></li>
+                <li><a href="#">🗓️ Review later during 'Admin Hour'</a></li>
+              </ul>
+        </div>
+      </div>
+        """
+    return html
+
+
+# DEPRECATED
 def generate_email_modal(mail, email_id):
     """
     Generate an HTML modal for an email's content.
