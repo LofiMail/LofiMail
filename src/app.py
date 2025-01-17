@@ -11,21 +11,28 @@ from src.database import db, models
 from src.database.models import Metadata, Mail
 from src.database.utils import fetch_mails_from_local_db
 
-import os
+import os, re
 
 
+def generate_unique_filename(email_address, imap_address):
+    # Sanitize email address by removing special characters and dots
+    sanitized_email = re.sub(r'[^a-zA-Z0-9]', '', email_address)
+    sanitized_imap = re.sub(r'[^a-zA-Z0-9]', '', imap_address)
 
+    # Combine both sanitized parts to form a unique identifier
+    unique_id = f"{sanitized_email}_{sanitized_imap}"
 
-def create_app():
-    app = Flask(__name__)
+    return unique_id
+
+def database_connect(app,name="db.sqlite"):
     # Path to the local SQLite database file
-    db_path = os.path.join(os.path.dirname(__file__), "database", "db.sqlite")
+    db_path = os.path.join(os.path.dirname(__file__), "database", name)
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     # PostgreSQL connection string
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost/dbname'
-    #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost/dbname'
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Ensure the database directory exists
     db_dir = os.path.join(os.path.dirname(__file__), "database")
@@ -45,6 +52,11 @@ def create_app():
             last_email_uid = Metadata(key="last_email_uid", value="0")
             db.session.add(last_email_uid)
             db.session.commit()
+
+def create_app():
+    app = Flask(__name__)
+    database_connect(app)
+
 
     @app.route('/')
     def index():

@@ -10,3 +10,4 @@ Below is a list of feature to be implemented:
 8. Provide features about contacts: frequency, etc.
 9. Provide simple classification of contacts.
 10. Provide simple classification of mails from summary+contact features.
+11. Add writing/sending mails: https://www.youtube.com/watch?v=zRcn7J4c-3M
