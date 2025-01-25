@@ -1,7 +1,7 @@
 from email.utils import parseaddr, parsedate_to_datetime
 from datetime import datetime
 from src.tools.decode import decode_mime_text
-from src.tools.processmail import summarize_body
+from src.tools.processmail import summarize_body, highlight_important_words, process_email
 
 
 import pytz
@@ -18,7 +18,7 @@ def convert_text_to_html(text):
     url_pattern = r'(https?://[^\s]+)'
 
     # Replace URLs with clickable HTML links
-    html_text = re.sub(url_pattern, r'<a href="\1" target="_blank">\1</a>', escaped_text)
+    html_text = re.sub(url_pattern, r'<a href="\1" target="_blank" class="link">Link</a><br>', escaped_text)
 
     html_text=re.sub(r"\r?\n", "<br>", html_text.strip())
 
@@ -106,15 +106,19 @@ def db_email_to_html(email,selfmail=""):
     category = "technical"
     category_name = "Technical"
 
+    conversation_class = ""
+    if (parent_email_id):
+        conversation_class= "conversation"
+
     html_code = f"""
-        <div class="email-item conversation {category}" onclick="fetchAndShowEmailContent('{email_id}')">
+        <div class="email-item {conversation_class} {category}" onclick="fetchAndShowEmailContent('{email_id}')">
                     <div class="email-conversation-summary">
                         <div class="conversation-icon" title="{participant_title}">
                             <span class="main-initial">{main_initial}</span>
                             {participant_count_html}
                         </div>
                     </div>
-                    <span class="email-sender ">{sender_email}</span>
+                    <span class="email-sender">{sender_email}</span>
                     <span class="email-title">{title}</span>
                     <span class="email-category {category}">{category_name}</span>
                     <span class="email-timestamp">{time_display}</span>
@@ -243,9 +247,13 @@ def db_email_to_modalhtml(email,selfmail=""):
 
 
     # Extract email body
-    print("BODY:", body)
-    body_summary = summarize_body(body)
+    print("SUMMARY:", summary)
+    body_summary = summarize_body(summary)
+    #Use highlight_important_words
 
+
+    #body = process_email(body)
+    #body = extract_body_fragments(body)
 
     # Clean the body (convert line breaks to HTML-friendly <br>)
     body_html = re.sub(r"\r?\n", "<br>", body.strip())

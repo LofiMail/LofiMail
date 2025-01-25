@@ -92,7 +92,7 @@ function snoozeEmail(event, snoozeButton) {
 
   setTimeout(() => {
     emailItem.style.opacity = '1';
-  }, 10000); // Snooze for 10 seconds as an example
+  }, 30000); // Snooze for 30 seconds as an example
 }
 
 

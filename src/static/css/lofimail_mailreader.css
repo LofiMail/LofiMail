@@ -1,4 +1,11 @@
 
+/* Anchor Link Styles */
+a.link {
+  text-decoration: none; /* Removes default underline */
+  color: #0078d4; /* Soft blue, you can tweak for preferences */
+  font-weight: 500; /* Medium weight to balance discreet */
+}
+
 .message-modal {
   position: fixed;
   top: 50%;
@@ -57,7 +64,8 @@
   text-transform: uppercase;
   /*color: #4a90e2; A calm blue for the title */
   font-family: 'Georgia', serif;
-  padding: 15px 5px 5px 5px;
+  /*padding: 15px 5px 5px 5px;*/
+  padding: 15px 45px 15px 45px;
 }
 
 /* Horizontal Line for Separation */
@@ -155,8 +163,8 @@ display: inline-block;
   border-radius: 5px;
   cursor: pointer;
   position: absolute; /* Absolute positioning within the .mail-header */
-  top: 10px; /* Adjust to position it away from the top */
-  right: 65px; /* Position it flush to the right */
+  top: 55px; /* Adjust to position it away from the top */
+  right: 10px; /* Position it flush to the right */
   opacity: 0.6; /* Make it slightly transparent for discretion */
 }
 
@@ -238,10 +246,12 @@ display: inline-block;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   padding: 15px;
-  /*width: 400px;*/
   font-size: 0.9rem;
   line-height: 1.4;
   z-index: 1001; /* Ensures it's above the blurred background */
+  overflow-wrap: break-word; /* Ensures long words wrap to the next line */
+  word-wrap: break-word;    /* Older browsers */
+  word-break: break-word;   /* Ensures breaks in long unbroken text */
 }
 
 .feature-title {
@@ -261,6 +271,7 @@ display: inline-block;
   top: -20%;
   left: calc(-30%);
   width: 25%;
+  display: block;
   /* transform: translateY(-50%);*/
 }
 

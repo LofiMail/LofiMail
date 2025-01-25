@@ -23,6 +23,7 @@ class Mail(db.Model):
     body = db.Column(db.Text)
     summary = db.Column(db.Text)
     is_read = db.Column(db.Boolean, default=False)
+    is_most_recent = db.Column(db.Boolean, default=True)
     parent_email_id = db.Column(db.Integer, db.ForeignKey('mails.id'))
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     recipients = db.relationship('Recipient', backref='mail', lazy=True)

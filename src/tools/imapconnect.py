@@ -2,7 +2,7 @@ import imaplib
 import email
 from email.header import decode_header
 from email.utils import getaddresses
-from src.tools.decode import parse_email_headers, extract_email_body
+from src.tools.decode import parse_email_headers, extract_email_body,extract_email_body_newcontent, extract_novel_content
 
 
 from src.tools.tohtml import generate_email_html, generate_email_modal
@@ -92,6 +92,7 @@ def fetch_newemails_from_server(mail, database):
                 else:
                     parsed_email = email.message_from_bytes(raw_email)
                     body = extract_email_body(parsed_email)
+                    summary = extract_novel_content(extract_email_body_newcontent(parsed_email))
                     #print("Email body", body)
                     # Save to the database
                     new_mail = Mail(
@@ -101,11 +102,20 @@ def fetch_newemails_from_server(mail, database):
                         date_received=#parse(email_data['Date']),
                         parsedate_to_datetime(email_data['Date']).astimezone(pytz.utc),
                         body=body,
-                        summary="Email summary here",
+                        summary=summary,
+                        parent_email_id=email_data['in_reply_to'],
+                        is_most_recent=True,
                     )
                     print("Mail creation is OK")
                     database.session.add(new_mail)
                     database.session.commit()  # Commit to get the mail's ID
+
+                    if new_mail.parent_email_id:
+                        #TODO: not "id=" it should be the processed id...
+                        parent_email = Mail.query.filter_by(id=new_mail.parent_email_id).first()
+                        if parent_email:
+                            parent_email.is_most_recent = False
+                    database.session.commit()
 
                     to_recipients = getaddresses([email_data.get("To", "")])
                     print("Recipients to is ok")
@@ -158,6 +168,7 @@ def htmlmails(mail, email_ids,myemail="your_email@example.com"):
     return mails_html
 
 
+# DEPRECATED
 def displaymails(mail, email_ids):
     # Fetch the first 10 emails
     for i, email_id in enumerate(email_ids):

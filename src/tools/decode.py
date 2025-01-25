@@ -1,8 +1,9 @@
 import re
 
 from email.header import Header, decode_header, make_header
+from bs4 import BeautifulSoup
 import hashlib
-
+from email_reply_parser import EmailReplyParser
 
 
 def is_valid_message_id(message_id):
@@ -112,24 +113,90 @@ def extract_email_body(parsed_email):
         return "[Error extracting email body]"
 
 
+def extract_email_body_newcontent(parsed_email):
+    """
+        Extract the first MIME part of an email, which typically contains the new content.
+        """
+    try:
+        # If the email is multipart, get the first part
+        if parsed_email.is_multipart():
+            for part in parsed_email.walk():
+                content_type = part.get_content_type()
+                content_disposition = str(part.get("Content-Disposition"))
+
+                # Focus only on text/plain or text/html parts (skip attachments)
+                if content_type in ("text/plain", "text/html") and "attachment" not in content_disposition:
+                    # Decode and return the first matching part
+                    payload = part.get_payload(decode=True)
+                    if payload:
+                        return payload.decode(part.get_content_charset() or "utf-8", errors="replace")
+
+        else:
+            # If not multipart, decode and return the single payload
+            payload = parsed_email.get_payload(decode=True)
+            if payload:
+                return payload.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
+
+        # If no content is found, return a fallback message
+        return "[No new content detected]"
+
+    except Exception as e:
+        print(f"Error extracting new content: {e}")
+        return "[Error extracting new content]"
+
+
 def extract_novel_content(email_body):
     """
     Extract only the novel (new) content from an email body by removing quoted or forwarded content.
     """
-    reply_markers = [
-        r"On .* wrote:",  # Gmail-style
-        r"From: .*",  # Generic "From"
-        r"Sent: .*",  # Outlook-style
-        r"-----",  # Outlook
-        r"-----Original Message-----",  # Outlook
-        r"> .*",  # Quoted lines (Thunderbird-style)
-    ]
 
-    # Combine all markers into a single regex
-    pattern = "|".join(reply_markers)
+    # Step 1: Preprocess HTML to extract plain text
+    if "<html" in email_body.lower():  # Check if the body contains HTML
+        soup = BeautifulSoup(email_body, "html.parser")
+        email_body = soup.get_text(separator="\n")  # Extract text with line breaks
 
-    # Split the body on the first occurrence of any marker
-    split_body = re.split(pattern, email_body, flags=re.IGNORECASE)
 
-    # The first part before any marker is the new content
-    return split_body[0].strip() if split_body else email_body.strip()
+    # Use EmailReplyParser to extract new content
+    parsed_email = EmailReplyParser.read(email_body)
+
+    # The first fragment is typically the new content
+    if parsed_email.fragments:
+
+        for fragment in parsed_email.fragments:
+            print("FRAGMENT:")
+            print(fragment.content.strip())
+
+        new_content = parsed_email.fragments[0].content.strip()
+        return new_content or "[No new content found]"
+    else:
+        return "[No content found in email]"
+
+    #
+    # # Enhanced reply markers
+    # reply_markers = [
+    #     r"On .*? at .*? wrote:",  # Common reply format with time (Gmail/Outlook)
+    #     r"On .*? \d{1,2}, \d{4}, .*? wrote:",  # Reply with date (e.g., Mon, Jan 13, 2025)
+    #     r"On \w{3}, \w{3} \d{1,2}, \d{4}, \d{1,2}:\d{2} [APap][Mm] .*? wrote:",  # Full reply line
+    #     r"From: .*",  # Generic "From"
+    #     r"Sent: .*",  # Outlook-style
+    #     r"To: .*",  # "To" field in replies
+    #     r"Date: .*",  # "Date" field
+    #     r"-----Original Message-----",  # Outlook original message separator
+    #     r"^>",  # Quoted lines (e.g., Thunderbird style)
+    #     r"^---",  # Plain horizontal line separator
+    #     r"On .* wrote:",  # Gmail-style
+    #     r"-----",  # Outlook
+    #     r"_______",  # Outlook
+    #     r"> .*",  # Quoted lines (Thunderbird-style)
+    # ]
+    #
+    # # Combine all markers into a single regex
+    # pattern = "|".join(reply_markers)
+    #
+    # # Split the body on the first occurrence of any marker
+    # split_body = re.split(pattern, email_body,  maxsplit=1, flags=re.IGNORECASE)
+    #
+    # # The first part before any marker is the new content
+    # return split_body[0].strip() if split_body else email_body.strip()
+
+

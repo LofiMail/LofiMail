@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template, session
 import time
 # Import the mailconnect function
-from src.tools.imapconnect import mailconnect, htmlmails, fetch_newemails_from_server
+from src.tools.imapconnect import mailconnect, fetch_newemails_from_server
 from src.tools.tohtml import db_email_to_html, db_email_to_modalhtml
 from src.tools.tohtml import  generate_email_modal
 from flask_sqlalchemy import SQLAlchemy

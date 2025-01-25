@@ -81,9 +81,9 @@
                     <span class="plus-icon">+</span>
                 </div>
             </div>
-
         </div>
 
+        <div class="email-list-container">
         <div class="email-list">
             {% for mail in mails %}
               {{ mail |safe }}
@@ -236,6 +236,7 @@
                 <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
             </div>
 
+        </div>
         </div>
     </div>
 

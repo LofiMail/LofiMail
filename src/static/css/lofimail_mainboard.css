@@ -39,19 +39,19 @@ body {
 
 .webmail-container {
   width: 100%;
-  max-width: 1600px;
+  max-width: 2000px;
   margin: 0 auto;
-  margin-top: 120px;
+  margin-top: 200px;
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.25); /* Adjust opacity */
   /*background-color: #f7f9fc;*/
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
+
 	overflow-y: auto; /* Adds vertical scrollbar */
+
 }
-
-
 
 /* Custom scrollbar styling */
 .webmail-container::-webkit-scrollbar {
@@ -66,11 +66,14 @@ body {
     background-color: #009ca4; /* Darker shade on hover */
 }
 
+
 .email-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
+
 
 .email-item {
   background-color: rgba(255, 255, 255, 0.8); /* Subtle background for distinction */
@@ -232,17 +235,21 @@ body {
 /* Styling Specific Elements */
 .email-sender {
   font-weight: bold;
-  font-size: 0.9rem;
-  flex: 1 1 10%;
+  font-size: 1.1rem;
+  flex: 1 1 250px;
   text-align: center;
   display: inline-block; /* Ensures inline display */
 
 
-  border-radius: 15px;
+  border-radius: 10px;
   padding: 4px 8px; /* Increased padding for better visibility */
   font-size: 0.9rem; /* Slightly larger font size */
-  background-color: #AAAAAA; /* Amber */
+  background-color: #4CA6FF; /*#999999;  Amber */
   color: #ffffff;
+  border-color: #4CA6FF; /* Accent border color */
+
+  border-width: 4px;
+  border-style: solid;
   opacity: 0.9; /* Make it slightly transparent for discretion */
 
 
@@ -346,6 +353,21 @@ padding-left: 15px;
   align-items: center; /* Vertically align items */
   gap: 5px; /* Space between Compose Button and Tiles */
   margin-bottom: 10px;
+
+  position: fixed; /* Keeps the search visible as user scrolls */
+  top: 45px; /* Adjust position */
+  left: 50%;
+  transform: translateX(-50%); /* Adjust for its own width to center */
+  z-index: 100; /* Keep it above other elements */
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .category-bar {
+    top: 30px; /* Slightly adjust the top position */
+    gap: 2px; /* Reduce space between tiles */
+    flex-wrap: wrap; /* Allow tiles to wrap onto the next line */
+  }
 }
 
 
@@ -357,9 +379,10 @@ padding-left: 15px;
   background-color: #008dff;
   color: white;
   font-size: 24px;
-  padding: 15px;
+  padding: 18px 18px 18px 18px;
+  margin-top: 8px;
   margin-left: 30px;
-  margin-right: 0px;
+  margin-right: 60px;
   border-radius: 50%;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   cursor: pointer;
@@ -368,7 +391,7 @@ padding-left: 15px;
 
 .compose-button:hover {
   background-color: #0066f3;
-  transform: scale(1.07); /* Slight zoom on hover */
+  transform: scale(1.2); /* Slight zoom on hover */
 }
 
 
