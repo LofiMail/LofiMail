@@ -68,7 +68,8 @@ def fetch_newemails_from_server(mail, database):
 
 
         # Fetch the email
-        status, msg_data = mail.uid("FETCH", email_id, '(RFC822)')
+        #status, msg_data = mail.uid("FETCH", email_id, '(RFC822)') # This fetches the mail and tag is as "Read" on the server.
+        status, msg_data = mail.uid("FETCH", email_id, '(BODY.PEEK[])') # This fetches the mail only.
 
         if status == "OK":
             print(f"Successfully fetched email UID {email_id.decode()}: {msg_data}")
