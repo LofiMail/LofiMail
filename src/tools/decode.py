@@ -33,7 +33,7 @@ import email
 
 def parse_email_headers(raw_email):
     parsed_email = email.message_from_bytes(raw_email)
-    print("Parsed email:", parsed_email)
+    #print("Parsed email:", parsed_email)
     try:
         message_id = parsed_email.get("Message-ID")
     except Exception as e:
@@ -162,9 +162,9 @@ def extract_novel_content(email_body):
     # The first fragment is typically the new content
     if parsed_email.fragments:
 
-        for fragment in parsed_email.fragments:
-            print("FRAGMENT:")
-            print(fragment.content.strip())
+        #for fragment in parsed_email.fragments:
+        #    print("FRAGMENT:")
+        #    #rint(fragment.content.strip())
 
         new_content = parsed_email.fragments[0].content.strip()
         return new_content or "[No new content found]"

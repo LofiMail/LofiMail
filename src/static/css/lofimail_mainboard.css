@@ -445,25 +445,32 @@ padding-left: 15px;
   background: linear-gradient(145deg, #6c757d, #495057);
 }
 
-.tile[data-category="meeting"] {
-  background: linear-gradient(145deg, #28a745, #1e7e34);
-}
 
-.tile[data-category="admin"] {
-  background: linear-gradient(145deg, #ffc107, #e0a800);
-}
-
-.tile[data-category="technical"] {
+.tile[data-category="one"] {
   background: linear-gradient(145deg, #0074cc, #117a8b);
 }
 
-.tile[data-category="company"] {
+.tile[data-category="two"] {
+  background: linear-gradient(145deg, #28a745, #1e7e34);
+}
+
+.tile[data-category="three"] {
+  background: linear-gradient(145deg, #ffc107, #e0a800);
+}
+
+.tile[data-category="four"] {
+  background: linear-gradient(145deg, #fd7e14, #e4600e);
+}
+
+.tile[data-category="five"] {
   background: linear-gradient(145deg, #7F00FF, #4F20AF);
 }
 
-.tile[data-category="newsletter"] {
-  background: linear-gradient(145deg, #fd7e14, #e4600e);
+
+.tile[data-category="six"] {
+  background: linear-gradient(145deg, #a72845, #7e1e34);
 }
+
 
 
 /* Specific Styling for "New Tag" Tile */
@@ -605,24 +612,29 @@ padding-left: 15px;
 
 
 /* Colors for Categories */
-.technical {
+.one {
   border-color: #0074cc;
 }
-.meeting {
+.two {
   border-color: #34c759;
 }
-.admin {
+.three {
   border-color: #ffcc00;
 }
-.newsletter {
+.four {
   border-color: #ff9500;
 }
-.company {
+.five {
   border-color: #af52de;
 }
 
+.six {
+  border-color: #ff0000;
+}
+
+
 /* Category Badges */
-.email-category.technical {
+.email-category.one {
   background-color: #0074cc;
   color: #ffffff;
   /*background-color: #e6f3ff;
@@ -630,34 +642,41 @@ padding-left: 15px;
 
 }
 
-.email-category.meeting {
+.email-category.two {
 background-color: #34c759;
   color: #ffffff;
   /*background-color: #e9ffe7;
   color: #34c759;*/
 }
 
-.email-category.admin {
+.email-category.three {
   background-color: #ffcc00;
   color: #ffffff;
   /*background-color: #fff9e6;
   color: #ffcc00;*/
 }
 
-.email-category.newsletter {
+.email-category.four {
   background-color: #ff9500;
   color: #ffffff;
   /*background-color: #fff2e6;
   color: #ff9500;*/
 }
 
-.email-category.company {
+.email-category.five {
   background-color: #af52de;
   color: #ffffff;
   /*background-color: #f9e6ff;
   color: #af52de;*/
 }
 
+
+.email-category.six {
+  background-color: #ff0000;
+  color: #ffffff;
+  /*background-color: #fff9e6;
+  color: #ffcc00;*/
+}
 
 
 

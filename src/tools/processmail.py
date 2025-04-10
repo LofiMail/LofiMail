@@ -21,8 +21,8 @@ from email_reply_parser import EmailReplyParser
 def summarize_body(body):
 
     novel_body = extract_novel_content(body)
-    print("\nNOVEL BODY:\n", novel_body)
-    print("END NOVEL BODY\n")
+    #print("\nNOVEL BODY:\n", novel_body)
+    #print("END NOVEL BODY\n")
 
     try:
         # Generate the summary with sumy
@@ -107,3 +107,57 @@ def process_email(email_content):
 
     # Step 3: Join processed sections into a conversation format
     return "\n\n".join(processed_conversation)
+
+
+# Fixed categories for now: make them adaptive later based on actual emails received.
+#TODO: Put these in the TAG database !
+CATEGORY_KEYWORDS = {
+    "Work": ["project", "meeting", "deadline", "report", "team"],
+    "Personal": ["birthday", "family", "vacation", "wedding", "trip"],
+    "Finance": ["invoice", "bank", "payment", "receipt", "subscription"],
+    "Shopping": ["order", "shipping", "discount", "deal", "promo"],
+    "Newsletters": ["newsletter", "update", "digest"],
+    "Events": ["RSVP", "conference", "webinar", "invite"],
+    "Social Media": ["Twitter", "LinkedIn", "new follower", "mention"],
+    "Support": ["help", "support", "ticket", "customer service"],
+    "Legal & Gov": ["IRS", "passport", "court", "contract", "policy"],
+    "Spam/Promo": ["win", "offer", "lottery", "bonus"],
+}
+
+def auto_tag_email(email):
+    """Assigns up to 3 tags based on subject and content"""
+    matched_tags = set()
+
+    # Check for keywords in subject and body
+    for category, keywords in CATEGORY_KEYWORDS.items():
+        #TODO:  base on summary as well ? or just summary ?
+        if any(word.lower() in email.subject.lower() for word in keywords) or \
+           any(word.lower() in email.body.lower() for word in keywords):
+            matched_tags.add(category)
+            if len(matched_tags) >= 3:  # Limit to 3 tags
+                break
+
+    return list(matched_tags)
+
+
+from src.database.models import Tag, EmailTag
+
+def update_db_emailtags(email, db):
+    # Auto-tagging
+    tags = auto_tag_email(email)
+
+    for tag_name in tags:
+        # Check if the tag already exists
+        tag = Tag.query.filter_by(name=tag_name).first()
+        if not tag:
+            tag = Tag(name=tag_name)
+            db.session.add(tag)
+            db.session.commit()  # Commit immediately to ensure tag has an ID
+
+        # Check if the email is already tagged with this tag
+        existing_email_tag = EmailTag.query.filter_by(email_id=email.id, tag_id=tag.id).first()
+        if not existing_email_tag:
+            email_tag = EmailTag(email_id=email.id, tag_id=tag.id)
+            db.session.add(email_tag)
+
+    db.session.commit()  # ✅ Save all changes

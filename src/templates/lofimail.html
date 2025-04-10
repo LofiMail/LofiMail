@@ -72,11 +72,11 @@
 
             <div class="category-tiles">
                 <div class="tile" data-category="all">None</div>
-                <div class="tile" data-category="technical">Technical</div>
-                <div class="tile" data-category="meeting">Meeting</div>
-                <div class="tile" data-category="admin">Admin</div>
-                <div class="tile" data-category="newsletter">Newsletter</div>
-                <div class="tile" data-category="company">Company</div>
+                <div class="tile" data-category="one">Work</div>
+                <div class="tile" data-category="two">Personal</div>
+                <div class="tile" data-category="three">Finance</div>
+                <div class="tile" data-category="four">Shopping</div>
+                <div class="tile" data-category="five">Newletters</div>
                 <div class="category-tile new-tag-tile" onclick="openNewTagModal()" title="Define new category">
                     <span class="plus-icon">+</span>
                 </div>
@@ -92,149 +92,149 @@
 
 
             <!-- Technical Work Emails -->
-            <div class="email-item conversation technical" onclick="openMessage('messageModal')">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="system.admin@tech.com">
-                        <span class="main-initial">S</span>
-                    </div>
-                </div>
-                <span class="email-sender ">System Admin</span>
-                <span class="email-title">Server Maintenance Scheduled</span>
-                <span class="email-category technical">Technical</span>
-                <span class="email-timestamp">1h</span>
-                <span class="email-flags" title="Important">⭐</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
+<!--            <div class="email-item conversation technical" onclick="openMessage('messageModal')">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="system.admin@tech.com">-->
+<!--                        <span class="main-initial">S</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender ">System Admin</span>-->
+<!--                <span class="email-title">Server Maintenance Scheduled</span>-->
+<!--                <span class="email-category technical">Technical</span>-->
+<!--                <span class="email-timestamp">1h</span>-->
+<!--                <span class="email-flags" title="Important">⭐</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
 
 
-            </div>
-            <div class="email-item conversation technical" onclick="openMessage('messageModalLong')">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="Devops, Bob, Charlie">
-                        <span class="main-initial">D</span>
-                        <span class="participant-count">+2</span>
-                    </div>
-                </div>
-                <span class="email-sender">Devops Mailing List</span>
-                <span class="email-title">Error Logs for Review</span>
-                <span class="email-category technical">Technical</span>
-                <span class="email-timestamp">3h</span>
-                <span class="email-flags" title="Unread">📩</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
+<!--            </div>-->
+<!--            <div class="email-item conversation technical" onclick="openMessage('messageModalLong')">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="Devops, Bob, Charlie">-->
+<!--                        <span class="main-initial">D</span>-->
+<!--                        <span class="participant-count">+2</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender">Devops Mailing List</span>-->
+<!--                <span class="email-title">Error Logs for Review</span>-->
+<!--                <span class="email-category technical">Technical</span>-->
+<!--                <span class="email-timestamp">3h</span>-->
+<!--                <span class="email-flags" title="Unread">📩</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
 
-            <!-- Meeting Emails -->
-            <div class="email-item meeting" onclick="openMessage('messageModal')">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="shr@tech.com">
-                        <span class="main-initial">H</span>
-                    </div>
-                </div>
-                <span class="email-sender ">HR Department</span>
-                <span class="email-title">Weekly All-Hands Meeting</span>
-                <span class="email-category meeting">Meeting</span>
-                <span class="email-timestamp">2d</span>
-                <span class="email-flags" title="Unanswered">💬</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
+<!--            &lt;!&ndash; Meeting Emails &ndash;&gt;-->
+<!--            <div class="email-item meeting" onclick="openMessage('messageModal')">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="shr@tech.com">-->
+<!--                        <span class="main-initial">H</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender ">HR Department</span>-->
+<!--                <span class="email-title">Weekly All-Hands Meeting</span>-->
+<!--                <span class="email-category meeting">Meeting</span>-->
+<!--                <span class="email-timestamp">2d</span>-->
+<!--                <span class="email-flags" title="Unanswered">💬</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
 
-            <div class="email-item conversation meeting" onclick="openMessage('messageModal')">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="JohnSmith, arthur@other.com, Zoe Doe, +1 other">
-                        <span class="main-initial">J</span>
-                        <span class="participant-count">+4</span>
-                    </div>
-                </div>
-                <span class="email-sender ">John Smith</span>
-                <span class="email-title">Project Kickoff Agenda</span>
-                <span class="email-category meeting">Meeting</span>
-                <span class="email-timestamp">30m</span> <span class="email-flags" title="Follow-Up Required">🔔</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
+<!--            <div class="email-item conversation meeting" onclick="openMessage('messageModal')">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="JohnSmith, arthur@other.com, Zoe Doe, +1 other">-->
+<!--                        <span class="main-initial">J</span>-->
+<!--                        <span class="participant-count">+4</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender ">John Smith</span>-->
+<!--                <span class="email-title">Project Kickoff Agenda</span>-->
+<!--                <span class="email-category meeting">Meeting</span>-->
+<!--                <span class="email-timestamp">30m</span> <span class="email-flags" title="Follow-Up Required">🔔</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
 
-            <!-- Administrative Emails -->
-            <div class="email-item conversation admin" onclick="openMessage('messageModal')">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="financedesk@tech.com, hr@tech.com">
-                        <span class="main-initial">F</span>
-                        <span class="participant-count">+1</span>
-                    </div>
-                </div>
-                <span class="email-sender ">Travel Desk</span>
-                <span class="email-title">Submit Expense Reports</span>
-                <span class="email-category admin">Admin</span>
-                <span class="email-timestamp">5h</span> <span class="email-flags" title="Pending Task">🕒</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
-            <div class="email-item admin">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="travels@tech.com">
-                        <span class="main-initial">T</span>
-                    </div>
-                </div>
-                <span class="email-sender ">Booking Team</span>
-                <span class="email-title">Hotel Reservation Confirmation</span>
-                <span class="email-category admin">Admin</span>
-                <span class="email-timestamp">1d</span>
-                <span class="email-flags" title="Unread">📩</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
+<!--            &lt;!&ndash; Administrative Emails &ndash;&gt;-->
+<!--            <div class="email-item conversation admin" onclick="openMessage('messageModal')">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="financedesk@tech.com, hr@tech.com">-->
+<!--                        <span class="main-initial">F</span>-->
+<!--                        <span class="participant-count">+1</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender ">Travel Desk</span>-->
+<!--                <span class="email-title">Submit Expense Reports</span>-->
+<!--                <span class="email-category admin">Admin</span>-->
+<!--                <span class="email-timestamp">5h</span> <span class="email-flags" title="Pending Task">🕒</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
+<!--            <div class="email-item admin">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="travels@tech.com">-->
+<!--                        <span class="main-initial">T</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender ">Booking Team</span>-->
+<!--                <span class="email-title">Hotel Reservation Confirmation</span>-->
+<!--                <span class="email-category admin">Admin</span>-->
+<!--                <span class="email-timestamp">1d</span>-->
+<!--                <span class="email-flags" title="Unread">📩</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
 
-            <!-- Newsletter / Mailing List Emails -->
-            <div class="email-item newsletter">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="Tech@list.com">
-                        <span class="main-initial">T</span>
-                    </div>
-                </div>
-                <span class="email-sender ">Tech Insights</span>
-                <span class="email-title">5 Trends in AI for 2024</span>
-                <span class="email-category newsletter">Newsletter</span>
-                <span class="email-timestamp">4h</span>
-                <span class="email-flags" title="Read Later">📚</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
-            <div class="email-item newsletter">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="comm@tech.com">
-                        <span class="main-initial">C</span>
-                    </div>
-                </div>
-                <span class="email-sender ">Company Updates</span>
-                <span class="email-title">Quarterly Results Released</span>
-                <span class="email-category newsletter">Newsletter</span>
-                <span class="email-timestamp">2d</span>
-                <span class="email-flags" title="Unimportant">🔕</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
+<!--            &lt;!&ndash; Newsletter / Mailing List Emails &ndash;&gt;-->
+<!--            <div class="email-item newsletter">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="Tech@list.com">-->
+<!--                        <span class="main-initial">T</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender ">Tech Insights</span>-->
+<!--                <span class="email-title">5 Trends in AI for 2024</span>-->
+<!--                <span class="email-category newsletter">Newsletter</span>-->
+<!--                <span class="email-timestamp">4h</span>-->
+<!--                <span class="email-flags" title="Read Later">📚</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
+<!--            <div class="email-item newsletter">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="comm@tech.com">-->
+<!--                        <span class="main-initial">C</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender ">Company Updates</span>-->
+<!--                <span class="email-title">Quarterly Results Released</span>-->
+<!--                <span class="email-category newsletter">Newsletter</span>-->
+<!--                <span class="email-timestamp">2d</span>-->
+<!--                <span class="email-flags" title="Unimportant">🔕</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
 
-            <!-- Out-of-the-box Emails -->
-            <div class="email-item conversation company">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="Alice, Bob, Charlie, +3 others">
-                        <span class="main-initial">A</span>
-                        <span class="participant-count">+5</span>
-                    </div>
-                </div>
-                <span class="email-sender">alice.brown@mail.com</span>
-                <span class="email-title">Hello from Alice!</span>
-                <span class="email-category company">Company</span>
-                <span class="email-timestamp">15m</span>
-                <span class="email-flags" title="Unread">📩</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
-            <div class="email-item company">
-                <div class="email-conversation-summary">
-                    <div class="conversation-icon" title="ceo@tech.com">
-                        <span class="main-initial">C</span>
-                    </div>
-                </div>
-                <span class="email-sender">CEO</span>
-                <span class="email-title">Thank You for Your Contributions</span>
-                <span class="email-category company">Company</span>
-                <span class="email-timestamp">3d</span>
-                <span class="email-flags" title="Important">⭐</span>
-                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
-            </div>
+<!--            &lt;!&ndash; Out-of-the-box Emails &ndash;&gt;-->
+<!--            <div class="email-item conversation company">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="Alice, Bob, Charlie, +3 others">-->
+<!--                        <span class="main-initial">A</span>-->
+<!--                        <span class="participant-count">+5</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender">alice.brown@mail.com</span>-->
+<!--                <span class="email-title">Hello from Alice!</span>-->
+<!--                <span class="email-category company">Company</span>-->
+<!--                <span class="email-timestamp">15m</span>-->
+<!--                <span class="email-flags" title="Unread">📩</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
+<!--            <div class="email-item company">-->
+<!--                <div class="email-conversation-summary">-->
+<!--                    <div class="conversation-icon" title="ceo@tech.com">-->
+<!--                        <span class="main-initial">C</span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <span class="email-sender">CEO</span>-->
+<!--                <span class="email-title">Thank You for Your Contributions</span>-->
+<!--                <span class="email-category company">Company</span>-->
+<!--                <span class="email-timestamp">3d</span>-->
+<!--                <span class="email-flags" title="Important">⭐</span>-->
+<!--                <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>-->
+<!--            </div>-->
 
         </div>
         </div>

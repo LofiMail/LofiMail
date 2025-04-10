@@ -17,12 +17,12 @@ def update_last_email_uid(new_uid,db):
     db.session.commit()
 
 def fetch_mails_from_local_db(db):
-    # Fetch the first 50 emails from the database, ordered by the date_received field (most recent first)
+    # Fetch the first 100 emails from the database, ordered by the date_received field (most recent first)
     emails  = (
     Mail.query
     .filter_by(is_most_recent=True)
     .order_by(Mail.date_received.desc())
-    .limit(50)
+    .limit(100)
     .all()
 )
 

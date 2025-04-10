@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template, session
 import time
 # Import the mailconnect function
-from src.tools.imapconnect import mailconnect, fetch_newemails_from_server
+from src.tools.imapconnect import mailconnect, fetch_emails_from_all_folders
 from src.tools.tohtml import db_email_to_html, db_email_to_modalhtml
 from src.tools.tohtml import  generate_email_modal
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +10,8 @@ from flask import jsonify, abort
 from src.database import db, models
 from src.database.models import Metadata, Mail
 from src.database.utils import fetch_mails_from_local_db
+
+from src.tools.processmail import update_db_emailtags, summarize_body
 
 import os, re
 
@@ -80,16 +82,22 @@ def create_app():
             print(jsonify({'status': 'success', 'message': 'Logged in successfully!'}))
 
             # Fetch new mails from the imap server to the database.
-            fetch_newemails_from_server(mail, db)
+            fetch_emails_from_all_folders(mail, db)
 
             print("\n**************\nNow retrieveing emails from local db\n***************\n")
             mails = fetch_mails_from_local_db(db)
             htmlmails=[]
-            # Process or display the emails as needed
+
+            EXCLUDED_FOLDERS = ["Spam", "Trash", "Sent", "Junk", "Deleted Items",
+                                "Replied"]  # Adjust based on server naming
+
             for _email in mails:
-                print(f"ID: {_email.id}, Email_id: {_email.email_id}, Subject: {_email.subject}, From: {_email.sender}, Date: {_email.date_received}")
-                html = db_email_to_html(_email,selfmail=email)
-                htmlmails.append(html)
+                print(
+                    f"ID: {_email.id}, Email_id: {_email.email_id}, Subject: {_email.subject}, From: {_email.sender}, Date: {_email.date_received}")
+                if _email.server_folder not in EXCLUDED_FOLDERS and _email.sender != email:
+                    update_db_emailtags(_email, db)
+                    html = db_email_to_html(_email, selfmail=email)
+                    htmlmails.append(html)
 
 
 
@@ -128,7 +136,7 @@ def create_app():
             abort(404, description="Email not found")
 
         email_content = db_email_to_modalhtml(mail)  # Your function to generate the HTML content
-        print("Email_content:", email_content)
+        #print("Email_content:", email_content)
 
         return jsonify({"html": email_content})
 

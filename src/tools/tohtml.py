@@ -40,6 +40,8 @@ def db_email_to_html(email,selfmail=""):
     # recipients
     recipients = email.recipients
     # tags
+    tag_names = [email_tag.tag.name for email_tag in email.tags]
+    print("Tag names:", tag_names)
     # actions
 
 
@@ -103,15 +105,30 @@ def db_email_to_html(email,selfmail=""):
     title = html.escape(title)
 
     #TODO: This is a stub. For later: compute some category automatically based on analysis of email content + recipients.
-    category = "technical"
+    category = "one"
     category_name = "Technical"
+    #tag_names
+    from src.tools.processmail import CATEGORY_KEYWORDS
+    nb_category = 6
+    ordinal = {1: "one",2:"two",3:"three",4:"four",5:"five", 6:"six"}
+
+    html_cat = ""
+    category_text = ""
+    for tagn in tag_names:
+        if tagn in CATEGORY_KEYWORDS:
+            i = list(CATEGORY_KEYWORDS).index(tagn)
+            if (i<nb_category):
+                ctext = ordinal[i+1]
+                html_cat+=f"""<span class="email-category {ctext}">{tagn}</span>"""
+                category_text+= f""" {ctext}"""
+    print("CATEGORIES",html_cat, category_text)
 
     conversation_class = ""
     if (parent_email_id):
         conversation_class= "conversation"
 
     html_code = f"""
-        <div class="email-item {conversation_class} {category}" onclick="fetchAndShowEmailContent('{email_id}')">
+        <div class="email-item {conversation_class} {category_text}" onclick="fetchAndShowEmailContent('{email_id}')">
                     <div class="email-conversation-summary">
                         <div class="conversation-icon" title="{participant_title}">
                             <span class="main-initial">{main_initial}</span>
@@ -120,7 +137,7 @@ def db_email_to_html(email,selfmail=""):
                     </div>
                     <span class="email-sender">{sender_email}</span>
                     <span class="email-title">{title}</span>
-                    <span class="email-category {category}">{category_name}</span>
+                    {html_cat}
                     <span class="email-timestamp">{time_display}</span>
                     <span class="email-flags" title="Important">⭐</span>
                     <span class="email-snooze" title="Snooze this email" onclick="snoozeEmail(event, this)">⏰</span>
@@ -172,7 +189,7 @@ def generate_email_html(email_id,email_data, current_email):
     # Extract the main initial from the sender's name or email
     main_initial = sender_email[0].upper() if sender_email else "?"
 
-    category = "technical"
+    category = "one"
     category_name = "Technical"
 
     participant_title = html.escape(participant_title)
@@ -224,6 +241,7 @@ def db_email_to_modalhtml(email,selfmail=""):
     # recipients
     recipients = email.recipients
     # tags
+    tags = email.tags
     # actions
 
 
@@ -247,8 +265,9 @@ def db_email_to_modalhtml(email,selfmail=""):
 
 
     # Extract email body
-    print("SUMMARY:", summary)
-    body_summary = summarize_body(summary)
+    #print("SUMMARY:", summary)
+    #body_summary = summarize_body(summary)
+    body_summary = summary
     #Use highlight_important_words
 
 
@@ -261,7 +280,6 @@ def db_email_to_modalhtml(email,selfmail=""):
 
     # Clean the body (convert line breaks to HTML-friendly <br>)
     body_summary_html = convert_text_to_html(body_summary)
-
 
 
 
@@ -322,7 +340,7 @@ def generate_email_modal(mail, email_id):
     Returns:
     - HTML string of the email modal.
     """
-    print("Generate Email Modal",mail,email_id)
+    print("Generate Email Modal",email_id)
     # Fetch the email by ID
     status, data = mail.fetch(email_id, "(RFC822)")
     if status != "OK":
