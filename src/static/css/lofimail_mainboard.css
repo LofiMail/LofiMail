@@ -716,7 +716,26 @@ body::after {
     opacity: 1;
   }
 }
+.logo-link {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
 
+.logo-link:hover {
+  opacity: 1;
+}
+
+.logo-image {
+  width: 150px; /* Adjust size as needed */
+  height: 150px;
+  border-radius: 50%; /* Makes it fully round */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+}
 
 .music-button {
             position:absolute;
