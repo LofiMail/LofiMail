@@ -1,7 +1,7 @@
 from email.utils import parseaddr, parsedate_to_datetime
 from datetime import datetime
-from src.tools.decode import decode_mime_text
-from src.tools.processmail import summarize_body, highlight_important_words, process_email
+from tools.decode import decode_mime_text
+from tools.processmail import summarize_body, highlight_important_words, process_email
 
 
 import pytz
@@ -108,7 +108,7 @@ def db_email_to_html(email,selfmail=""):
     category = "one"
     category_name = "Technical"
     #tag_names
-    from src.tools.processmail import CATEGORY_KEYWORDS
+    from tools.processmail import CATEGORY_KEYWORDS
     nb_category = 6
     ordinal = {1: "one",2:"two",3:"three",4:"four",5:"five", 6:"six"}
 
@@ -296,7 +296,7 @@ def db_email_to_modalhtml(email,selfmail=""):
                     {recipient_html}
                 </div>  
                 <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
-                <button class="close-button" onclick="closeEmail('messageModal')" title="Close mail">❌</button>
+                <button class="close-button" onclick="closeEmail('messageModal'); stopMailAudio();" title="Close mail">❌</button>
             </div>
             <hr class="message-separator">
             <div class="message-body">{body_html}</div>
@@ -308,7 +308,7 @@ def db_email_to_modalhtml(email,selfmail=""):
             <div class="feature-box feature-summary">
                 <div class="feature-title">Summary</div>
                 <hr class="feature-separator">
-    	        <div>{body_summary_html}</div>
+    	        <div class="feature-summary-content">{body_summary_html}</div>
             </div>
             <div class="feature-box feature-actions">
               <div class="feature-title">Quick links</div>
@@ -394,8 +394,8 @@ def generate_email_modal(mail, email_id):
                 <span class="fromto">to</span>
                 {recipient_html}
             </div>  
-            <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
-            <button class="close-button" onclick="closeEmail()" title="Close mail">❌</button>
+                 <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
+                <button class="close-button" onclick="closeEmail('messageModal'); stopMailAudio();" title="Close mail">❌</button>
         </div>
         <hr class="message-separator">
         <div class="message-body">{body_html}</div>

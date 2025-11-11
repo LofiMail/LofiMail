@@ -1,5 +1,6 @@
 body {
   font-family: Arial, sans-serif;
+ /* font-family: 'Lora', 'Times New Roman', serif;*/
   margin: 0;
   padding: 0;
   width: 100vw;
@@ -522,7 +523,23 @@ padding-left: 15px;
 .quick-search-container {
   position: fixed; /* Keeps the search visible as user scrolls */
   top: 15px; /* Adjust position */
-  left: 17%;
+  left: 8%;
+  z-index: 100; /* Keep it above other elements */
+  justify-content: center;
+}
+
+.scholar-search-container {
+  position: fixed; /* Keeps the search visible as user scrolls */
+  top: 15px; /* Adjust position */
+  left: 21%;
+  z-index: 100; /* Keep it above other elements */
+  justify-content: center;
+}
+
+.lilo-search-container {
+  position: fixed; /* Keeps the search visible as user scrolls */
+  top: 15px; /* Adjust position */
+  left: 34%;
   z-index: 100; /* Keep it above other elements */
   justify-content: center;
 }
@@ -540,8 +557,7 @@ padding-left: 15px;
 }
 
 
-
-.quick-search-bar {
+.search-bar {
   width: 100%;
   opacity: 0.5;
   padding: 8px 35px 8px 15px; /* Room for the icon */
@@ -553,24 +569,24 @@ padding-left: 15px;
   transition: background-color 0.3s ease, width 0.3s ease, border-color 0.3s ease; /* Smooth transitions */
 }
 
-.quick-search-bar:focus {
+.search-bar:focus {
   opacity: 0.8;
   background-color: #fff;  /* Change to white on focus */
   border-color: #007bff; /* Accent border color */
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* Slightly stronger shadow on focus */
 }
 
-.quick-search-bar::placeholder {
+.search-bar::placeholder {
   color: #777; /* Subtle placeholder text color */
 }
 
-.quick-search-bar:focus::placeholder {
+.search-bar:focus::placeholder {
   color: #007baa; /* Placeholder color changes when focused */
 }
 
 
 /* When focused */
-.quick-search-bar:focus {
+.search-bar:focus {
   background-color: #fff;  /* Change to white on focus */
   border-color: #007bff; /* Accent border color */
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); /* Slightly stronger shadow on focus */
@@ -578,9 +594,24 @@ padding-left: 15px;
 }
 
 /* On hover, but only if it's not focused */
-.quick-search-container:hover .quick-search-bar:not(:focus) {
+.quick-search-container:hover .search-bar:not(:focus) {
   width: 250px;  /* Shrink when hovered and unfocused */
 }
+
+
+/* On hover, but only if it's not focused */
+.lilo-search-container:hover .search-bar:not(:focus) {
+  width: 250px;  /* Shrink when hovered and unfocused */
+}
+
+
+/* On hover, but only if it's not focused */
+.scholar-search-container:hover .search-bar:not(:focus) {
+  width: 250px;  /* Shrink when hovered and unfocused */
+}
+
+
+
 
 
 
@@ -693,7 +724,17 @@ body::after {
   background: rgba(0, 0, 0, 0.1); /* Dark overlay */
   z-index: -1;
 }
+.background-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -10;
+}
 
+#background-image,
 #background-video {
   position: fixed;
   top: 0;
@@ -705,8 +746,8 @@ body::after {
   /*background: linear-gradient(135deg, #e0eafc, #cfdef3); Matches body background */
   opacity: 0; /* Start hidden */
   animation: videoFadeIn 1.5s ease-in-out 0.5s forwards; /* Smooth fade-in */
-
 }
+
 /* Keyframe for fade-in */
 @keyframes videoFadeIn {
   0% {
@@ -716,6 +757,18 @@ body::after {
     opacity: 1;
   }
 }
+
+#background-image {
+    opacity: 1;
+    z-index: -2;
+}
+
+#background-video {
+    opacity: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
 .logo-link {
   position: absolute;
   top: 20px;
@@ -783,8 +836,8 @@ body::after {
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.5);
 	    opacity: 0;
-            animation: fadeInOut 30s infinite;
-            animation-delay: 8s; /* Staggered start */
+            animation: fadeInOut 60s infinite;
+            animation-delay: 10s; /* Staggered start */
         }
 /*
 .mantras:hover {
@@ -808,10 +861,40 @@ body::after {
         }
 
 @keyframes fadeInOut {
-            0%,15%, 85%,100% {
+            0%,25%, 75%,100% {
                 opacity: 0; /* Hidden */
             }
-            40%, 60% {
+            35%, 65% {
                 opacity: 0.9; /* Fully visible */
             }
         }
+
+
+
+
+.sync-container {
+  text-align: center;
+  margin-top: 8px;
+  position: relative;
+}
+
+.sync-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;         /* Nice and readable emoji size */
+  cursor: pointer;
+  opacity: 0.4;              /* Almost transparent */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sync-btn:hover {
+  opacity: 0.9;
+  transform: rotate(15deg);  /* subtle playful feedback */
+}
+
+.sync-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: rotate(0deg);
+}
+

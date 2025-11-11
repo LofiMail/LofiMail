@@ -82,31 +82,79 @@ def parse_email_headers(raw_email):
         'Date': parsed_email.get("Date"),
         "To": parsed_email.get("To"),
         "Cc": parsed_email.get("Cc"),
-        'in_reply_to': parsed_email.get('In-Reply-To'),
+        'in_reply_to': parsed_email.get('In-Reply-To'),# This outputs a Message-ID, not a uid.
         'references': references.split() if references else None,
     }
 
 
+# def extract_email_body(parsed_email):
+#     try:
+#         if parsed_email.is_multipart():
+#             body = ""
+#             for part in parsed_email.walk():
+#                 content_type = part.get_content_type()
+#                 content_disposition = str(part.get("Content-Disposition"))
+#
+#                 # Ignore attachments and only get text/plain or text/html
+#                 # TODO: This provides both plain and html (duplicate) if it is there ! We would prefer only html.
+#                 if content_type in ("text/plain", "text/html") and "attachment" not in content_disposition:
+#                     payload = part.get_payload(decode=True)
+#                     if payload:
+#                         body += payload.decode(part.get_content_charset() or "utf-8", errors="replace")
+#         else:
+#             # If not multipart, get the payload directly
+#             body = parsed_email.get_payload(decode=True)
+#             if body:
+#                 body = body.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
+#
+#         return body or "[No body content found]"
+#
+#     except Exception as e:
+#         print(f"Error extracting email body: {e}")
+#         return "[Error extracting email body]"
+
 def extract_email_body(parsed_email):
     try:
+        html_body = None
+        text_body = None
+
         if parsed_email.is_multipart():
-            body = ""
             for part in parsed_email.walk():
                 content_type = part.get_content_type()
                 content_disposition = str(part.get("Content-Disposition"))
 
-                # Ignore attachments and only get text/plain or text/html
-                if content_type in ("text/plain", "text/html") and "attachment" not in content_disposition:
-                    payload = part.get_payload(decode=True)
-                    if payload:
-                        body += payload.decode(part.get_content_charset() or "utf-8", errors="replace")
+                # Ignore attachments
+                if "attachment" in content_disposition:
+                    continue
+
+                payload = part.get_payload(decode=True)
+                if not payload:
+                    continue
+
+                charset = part.get_content_charset() or "utf-8"
+                decoded = payload.decode(charset, errors="replace")
+
+                if content_type == "text/html":
+                    html_body = decoded
+                elif content_type == "text/plain" and text_body is None:
+                    # Only keep first text/plain encountered (as fallback)
+                    text_body = decoded
+
+            # Prefer HTML over plain text
+            if html_body:
+                return html_body
+            elif text_body:
+                return text_body
+            else:
+                return "[No body content found]"
+
         else:
-            # If not multipart, get the payload directly
+            # Non-multipart: decode directly
             body = parsed_email.get_payload(decode=True)
             if body:
-                body = body.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
-
-        return body or "[No body content found]"
+                return body.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
+            else:
+                return "[No body content found]"
 
     except Exception as e:
         print(f"Error extracting email body: {e}")

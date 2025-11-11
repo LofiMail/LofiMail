@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Webmail Concept</title>
-
+    <title>Lofimail</title>
+    <!--
+   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+   -->
 
     <link rel="stylesheet" href="static/css/lofimail_mainboard.css">
     <link rel="stylesheet" href="static/css/lofimail_mailreader.css">
@@ -12,10 +14,19 @@
 
 </head>
 <body>
-<video autoplay muted loop id="background-video">
-    <source src="static/media/background_house_HD.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+
+<div class="background-wrapper">
+    <!-- Static image background -->
+    <img src="static/media/background_house_HD_frame.jpg" alt="Background" id="background-image">
+
+    <!-- Optional soft video overlay -->
+    <video autoplay muted loop playsinline preload="auto" id="background-video">
+        <source src="static/media/forest-sunset_low.mp4" type="video/mp4">
+        <!--<source src="static/media/background_house_low.mp4" type="video/mp4">-->
+        <!-- How to generate a low frequency fram video: fmpeg -i .\forest-sunset.3840x2160.mp4 -r 15 -vf "scale=1280:-1" -b:v 800k forest-sunset_low.mp4 -->
+        Your browser does not support the video tag.
+    </video>
+</div>
 
 
 <div class="page-container">
@@ -42,10 +53,13 @@
       return false;">🎶
     </a>
 
-
     <a href="/your-target-page" class="logo-link">
-  <img src="{{ url_for('static', filename='media/lofimaillogo1.png') }}" alt="LofiMail Logo" class="logo-image">
-</a>
+      <img src="{{ url_for('static', filename='media/lofimaillogo1.png') }}" alt="LofiMail Logo" class="logo-image">
+    </a>
+
+    <div class="sync-container">
+      <button id="syncBtn" class="sync-btn" title="Sync mailbox">🔄</button>
+    </div>
 
     <!--
     <a href="https://mynoise.net/NoiseMachines/canadaQuebecForestSoundscape.php?l=27272727000000002727&a=1&am=s&title=For%C3%AAt%20Ouareau"
@@ -64,9 +78,25 @@
     -->
 
     <div class="quick-search-container">
-        <input type="text" class="quick-search-bar" id="quick-search" placeholder="Search or query..."/>
-        <span class="search-icon" title="Search"><i class="fas fa-search"></i></span>
+        <input type="text" class="search-bar" id="quick-search" placeholder="Search in Lofimail..."/>
+        <span class="search-icon" title="Search in Lofimail"><i class="fas fa-search"></i></span>
     </div>
+
+    <div class="lilo-search-container">
+    <input type="text" class="search-bar" id="lilo-search" placeholder="Search on Lilo..."/>
+    <span class="search-icon" id="lilo-search-btn" title="Search on Lilo">
+        <i class="fas fa-leaf"></i> <!-- or fa-search if you prefer -->
+    </span>
+    </div>
+
+
+    <div class="scholar-search-container">
+    <input type="text" class="search-bar" id="scholar-search" placeholder="Search on Google Scholar..."/>
+    <span class="search-icon" id="scholar-search-btn" title="Search on Google Scholar">
+        <i class="fas fa-leaf"></i> <!-- or fa-search if you prefer -->
+    </span>
+    </div>
+
 
 
     <div class="webmail-container">
@@ -263,7 +293,7 @@
                 <span class="recipient recipient-category-3">Charlie Lee</span>
             </div>
             <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
-            <button class="close-button" onclick="closeEmail('messageModal')" title="Close mail">❌</button>
+            <button class="close-button" onclick="closeEmail('messageModal'); stopMailAudio();" title="Close mail">❌</button>
         </div>
 
         <hr class="message-separator">
@@ -314,7 +344,7 @@
                 <span class="recipient recipient-category-3">Charlie Lee</span>
             </div>
             <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
-            <button class="close-button" onclick="closeEmail('messageModalLong')" title="Close mail">❌</button>
+            <button class="close-button" onclick="closeEmail('messageModal'); stopMailAudio();" title="Close mail">❌</button>
         </div>
 
         <hr class="message-separator">
@@ -398,10 +428,7 @@
 
 
     <div class="mantras" id="mantra">
-        <div class="mantra">
-            "Chaque jour, je suis davantage encourageant, énergique, enthousiaste, valorisant, et j'attire un entourage
-            à l'image de ces énergies, avec bonheur et fluidité."
-        </div>
+		<div class="mantra" id="mantra-slot"></div>
     </div>
 
 </div>
@@ -409,6 +436,7 @@
 
 <script src="static/js/lofimail_mainboard.js"></script>
 <script src="static/js/lofimail_mailreader.js"></script>
+<script src="static/js/lofimail_mantras.js"></script>
 </body>
 </html>
 

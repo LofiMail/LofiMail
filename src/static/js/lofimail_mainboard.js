@@ -27,33 +27,34 @@ function closeEmail(id) {
 
 
 const letterColors = {
-  A: "#3498db", // Light Blue
-  B: "#2ecc71", // Green
-  C: "#9b59b6", // Purple
-  D: "#f1c40f", // Yellow
-  E: "#16a085", // Teal
-  F: "#34495e", // Dark Blue-Grey
-  G: "#1abc9c", // Aqua
-  H: "#2980b9", // Blue
-  I: "#8e44ad", // Dark Purple
-  J: "#f39c12", // Orange
-  K: "#27ae60", // Dark Green
-  L: "#bdc3c7", // Light Grey
-  M: "#7f8c8d", // Grey
-  N: "#95a5a6", // Soft Grey
-  O: "#2c3e50", // Dark Slate
-  P: "#e67e22", // Soft Orange
-  Q: "#d0e1f9", // Very Light Blue
-  R: "#3498db", // Light Blue
-  S: "#2ecc71", // Green
-  T: "#1abc9c", // Aqua
-  U: "#34495e", // Dark Blue-Grey
-  V: "#8e44ad", // Dark Purple
-  W: "#bdc3c7", // Light Grey
-  X: "#16a085", // Teal
-  Y: "#f1c40f", // Yellow
-  Z: "#7f8c8d"  // Grey
+  A: "#5dade2", // Sky Blue
+  B: "#58d68d", // Fresh Green
+  C: "#af7ac5", // Soft Lavender
+  D: "#f7dc6f", // Warm Yellow
+  E: "#48c9b0", // Mint
+  F: "#85c1e9", // Light Denim Blue
+  G: "#76d7c4", // Aqua Mint
+  H: "#5faee3", // Medium Blue
+  I: "#bb8fce", // Soft Purple
+  J: "#f8c471", // Warm Orange
+  K: "#7dcea0", // Fresh Green
+  L: "#d5dbdb", // Misty Grey
+  M: "#bfc9ca", // Soft Grey
+  N: "#ccd1d1", // Pale Grey
+  O: "#a9cce3", // Airy Blue
+  P: "#f5b041", // Light Orange
+  Q: "#d6eaf8", // Very Light Blue
+  R: "#5dade2", // Sky Blue
+  S: "#58d68d", // Fresh Green
+  T: "#76d7c4", // Aqua Mint
+  U: "#a9cce3", // Airy Blue
+  V: "#c39bd3", // Light Lavender
+  W: "#e5e8e8", // Cloud Grey
+  X: "#48c9b0", // Mint
+  Y: "#f9e79f", // Soft Yellow
+  Z: "#aeb6bf"  // Gentle Grey
 };
+
 
 function assignCircleColor(iconElement) {
   const initialElement = iconElement.querySelector(".main-initial");
@@ -136,4 +137,180 @@ document.querySelectorAll('.tile').forEach(tile => {
       });
     }
   });
+});
+
+
+
+const syncBtn = document.getElementById('syncBtn');
+let pollingIntervalId = null;
+
+async function startSync() {
+  const syncBtn = document.getElementById("syncBtn");
+
+  syncBtn.disabled = true;
+  syncBtn.textContent = "⏳";
+
+  const resp = await fetch("/start_sync", { method: "POST" });
+  const data = await resp.json();
+
+  if (resp.status === 202 || data.status === "started") {
+    startPollingStatus();
+  } else {
+    syncStatus.textContent = `Sync error: ${data.message || resp.statusText}`;
+    syncBtn.disabled = false;
+  }
+}
+
+
+
+async function startPollingStatus() {
+  const syncBtn = document.getElementById("syncBtn");
+  const syncStatus = document.getElementById("syncStatus");
+
+  const interval = setInterval(async () => {
+    const resp = await fetch("/sync_status");
+    const data = await resp.json();
+
+    if (!data.running) {
+      clearInterval(interval);
+      syncBtn.disabled = false;
+      syncBtn.textContent = "🔄";   // ✅ restore text
+      refreshMails(); // fetch updated mail list
+    }
+  }, 3000);
+}
+
+async function refreshMails() {
+    fetch("/mails_fragment?v=" + Date.now(), { cache: "no-store" })
+        .then(resp => resp.text())
+        .then(html => {
+          const emailList = document.querySelector(".email-list");
+          if (emailList) {
+            emailList.innerHTML = html;
+          } else {
+            console.error("Could not find .email-list element");
+          }
+        document.querySelectorAll(".conversation-icon").forEach(assignCircleColor);
+        })
+        .catch(err => console.error("Error refreshing mail list:", err));
+  // fetch mail list fragment and inject it in the DOM
+  //await  fetch("/mails_fragment", { cache: "no-store" });
+  //const data = await r.json();
+  // assume you have a container with id="mailsContainer"
+  //const container = document.getElementById('mailsContainer');
+  //if (container && data.html !== undefined) {
+  //  container.innerHTML = data.html;
+  //}
+}
+
+// Wire the button
+syncBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  startSync();
+});
+
+// Optional: automatic sync every 10 minutes (900000 ms)
+// Uncomment if you want auto-sync.
+setInterval(() => { startSync(); }, 10 * 60 * 1000);
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const liloInput = document.getElementById("lilo-search");
+    const liloBtn = document.getElementById("lilo-search-btn");
+
+    function searchLilo() {
+        const query = liloInput.value.trim();
+        if (query !== "") {
+            const url = `https://search.lilo.org/?theme=0&q=${encodeURIComponent(query)}&t=web`;
+            window.open(url, '_blank');
+        }
+    }
+
+    // Trigger on click
+    liloBtn.addEventListener("click", searchLilo);
+
+    // Trigger on Enter key
+    liloInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            searchLilo();
+        }
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const scholarInput = document.getElementById("scholar-search");
+    const scholarBtn = document.getElementById("scholar-search-btn");
+
+    function searchScholar() {
+        const query = scholarInput.value.trim();
+        if (query !== "") {
+            const url = `https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=${encodeURIComponent(query)}&btnG=`;
+            window.open(url, '_blank');
+        }
+    }
+
+    // Trigger on click
+    scholarBtn.addEventListener("click", searchScholar);
+
+    // Trigger on Enter key
+    scholarInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            searchScholar();
+        }
+    });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const video = document.getElementById("background-video");
+    const img = document.getElementById("background-image");
+    let idleTimer = null;
+    let isIdle = false;
+
+    // Helper: smoothly toggle visibility
+    function fadeVideo(show) {
+        if (show) {
+            video.style.opacity = "1";
+            img.style.opacity = "0.6"; // slightly visible under video
+            video.play().catch(() => {});
+        } else {
+            video.style.opacity = "0";
+            img.style.opacity = "1";
+            video.pause();
+        }
+    }
+
+    // Detect user idle (no mouse or keyboard for N ms)
+    function resetIdleTimer() {
+        if (isIdle) {
+            fadeVideo(true); // reactivate video
+            isIdle = false;
+        }
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+            isIdle = true;
+            fadeVideo(false); // user idle, hide video
+        }, 15000); // 15s idle threshold
+    }
+
+    // Watch for user activity
+    ["mousemove", "keydown", "scroll", "touchstart"].forEach(evt => {
+        window.addEventListener(evt, resetIdleTimer);
+    });
+
+    // Pause video when tab not visible
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            fadeVideo(false);
+        } else if (!isIdle) {
+            fadeVideo(true);
+        }
+    });
+
+    // Start everything
+    fadeVideo(true);
+    resetIdleTimer();
 });

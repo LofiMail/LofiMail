@@ -1,6 +1,6 @@
 
 
-from src.tools.decode import decode_mime_text, extract_novel_content
+from tools.decode import decode_mime_text, extract_novel_content
 
 # The following line shld be run:
 # python -c "import nltk; nltk.download('punkt')"
@@ -140,7 +140,7 @@ def auto_tag_email(email):
     return list(matched_tags)
 
 
-from src.database.models import Tag, EmailTag
+from database.models import Tag, EmailTag
 
 def update_db_emailtags(email, db):
     # Auto-tagging

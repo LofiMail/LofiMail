@@ -1,5 +1,5 @@
 
-from src.database.models import Metadata, Mail  # Adjust the import path if necessary
+from database.models import Metadata, Mail  # Adjust the import path if necessary
 
 def get_last_email_uid():
     metadata_entry = Metadata.query.filter_by(key="last_email_uid").first()

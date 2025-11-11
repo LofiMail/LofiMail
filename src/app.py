@@ -1,19 +1,89 @@
 from flask import Flask, request, jsonify, render_template, session
+from flask import redirect, url_for
+from flask import send_file
+import edge_tts
+import asyncio
+import uuid
+import threading
 import time
+import secrets
 # Import the mailconnect function
-from src.tools.imapconnect import mailconnect, fetch_emails_from_all_folders
-from src.tools.tohtml import db_email_to_html, db_email_to_modalhtml
-from src.tools.tohtml import  generate_email_modal
+from tools.imapconnect import mailconnect, fetch_emails_from_all_folders
+from tools.tohtml import db_email_to_html, db_email_to_modalhtml
 from flask_sqlalchemy import SQLAlchemy
 from flask import jsonify, abort
 
-from src.database import db, models
-from src.database.models import Metadata, Mail
-from src.database.utils import fetch_mails_from_local_db
+from database import db, models
+from database.models import Metadata, Mail
+from database.utils import fetch_mails_from_local_db
 
-from src.tools.processmail import update_db_emailtags, summarize_body
+from tools.processmail import update_db_emailtags, summarize_body
 
 import os, re
+
+
+
+
+# Simple in-memory sync status. For multi-process deployments, use Redis/DB.
+sync_state = {
+    "running": False,
+    "message": "Idle",
+    "last_error": None,
+    "progress": 0,  # optional percent-ish info (0-100)
+}
+sync_lock = threading.Lock()
+
+
+def set_sync_state(running=None, message=None, last_error=None, progress=None):
+    with sync_lock:
+        if running is not None:
+            sync_state["running"] = running
+        if message is not None:
+            sync_state["message"] = message
+        if last_error is not None:
+            sync_state["last_error"] = last_error
+        if progress is not None:
+            sync_state["progress"] = progress
+
+
+def sync_worker(user_email=None, user_password=None, imap_server=None):
+    """
+    This runs in a thread. It should create its own app context if needed.
+    We assume fetch_emails_from_all_folders(mail, db) uses the 'db' SQLAlchemy session object.
+    """
+    try:
+        set_sync_state(running=True, message="Starting sync...", last_error=None, progress=0)
+        # Create an app context to use `db` and models safely
+        with app.app_context():
+            # If you have stored credentials per-session or per-user, pass them here.
+            # For simplicity, try to connect using provided args, or implement mailconnect as needed.
+            if not (user_email and user_password and imap_server):
+                # If you don't pass creds, attempt to use previously-stored connection info or raise.
+                raise ValueError("Mail connection parameters missing for background sync.")
+
+            set_sync_state(message="Connecting to IMAP server...")
+            mail = mailconnect(user_email, user_password, imap_server)
+
+            set_sync_state(message="Fetching new emails (scanning folders)...")
+            # Optionally, you can wrap fetch_emails_from_all_folders to accept a callback
+            # so you can update progress. Here we'll do naive progress updates.
+            fetch_emails_from_all_folders(mail, db)
+
+            set_sync_state(message="Finalizing (committing)...", progress=90)
+            # ensure DB commit if needed (fetch_emails_from_all_folders should commit)
+            db.session.commit()
+
+            set_sync_state(message="Sync complete", progress=100)
+            # small delay to let frontend show "Done"
+            time.sleep(0.2)
+    except Exception as e:
+        set_sync_state(message="Sync failed", last_error=str(e))
+        app.logger.exception("Background sync failed")
+    finally:
+        # ensure running is cleared
+        set_sync_state(running=False)
+
+
 
 
 def generate_unique_filename(email_address, imap_address):
@@ -59,21 +129,69 @@ def create_app():
     app = Flask(__name__)
     database_connect(app)
 
+    # --- Automatic secret key handling ---
+    keyfile = "secret_key.txt"
+
+    if os.path.exists(keyfile):
+        # Reuse the same key (keeps sessions working between restarts)
+        with open(keyfile, "r") as f:
+            app.secret_key = f.read().strip()
+    else:
+        # Generate a new random one and save it for next time
+        new_key = secrets.token_hex(32)
+        with open(keyfile, "w") as f:
+            f.write(new_key)
+        app.secret_key = new_key
+
 
     @app.route('/')
     def index():
         return render_template('login.html')  # Render your login form template
 
+    @app.route('/start_sync', methods=['POST'])
+    def start_sync():
+        """
+        Start a background sync thread. Returns immediately with status.
+        Expect JSON body like: {"email":"...", "password":"...", "imap":"imap.example.com"}
+        or pick the credentials from the logged-in session if you manage them.
+        """
+        if sync_state["running"]:
+            return jsonify({"status": "already_running", "message": sync_state["message"]}), 200
+
+        email = session.get('email')
+        password = session.get('password')
+        imap_server = session.get('imap')
+
+        if not (email and password and imap_server):
+            return jsonify({"status": "error", "message": "Not logged in"}), 403
+
+        t = threading.Thread(target=sync_worker, args=(email, password, imap_server), daemon=True)
+        t.start()
+        return jsonify({"status": "started", "message": "Background sync started"}), 202
+
+    @app.route('/sync_status', methods=['GET'])
+    def sync_status():
+        """Return current sync status."""
+        with sync_lock:
+            return jsonify({
+                "running": sync_state["running"],
+                "message": sync_state["message"],
+                "last_error": sync_state["last_error"],
+                "progress": sync_state["progress"]
+            })
+
     @app.route('/login', methods=['POST'])
     def connect_mail():
-        print(f"Request object: {request}")
+        # with open("log.txt", "a", encoding="utf-8") as f:
+        #     f.write("Hello from /login\n")
+        # print(f"Request object: {request}")
         try:
             # Extract form data
             email = request.form.get('email')
             password = request.form.get('password')
             imap_server = request.form.get('imap')
 
-            print(f"Login information: {email, password, imap_server}")
+            print(f"Login information: {email, imap_server}")
 
 
             # Perform IMAP connection
@@ -81,40 +199,33 @@ def create_app():
             # Return success response
             print(jsonify({'status': 'success', 'message': 'Logged in successfully!'}))
 
-            # Fetch new mails from the imap server to the database.
-            fetch_emails_from_all_folders(mail, db)
+            # ✅ Store minimal info in session (password stays only for current session)
+            session['email'] = email
+            session['password'] = password
+            session['imap'] = imap_server
 
-            print("\n**************\nNow retrieveing emails from local db\n***************\n")
-            mails = fetch_mails_from_local_db(db)
-            htmlmails=[]
+            # Optionally, run initial local fetch to populate DB
+            #fetch_emails_from_all_folders(mail, db)
 
-            EXCLUDED_FOLDERS = ["Spam", "Trash", "Sent", "Junk", "Deleted Items",
-                                "Replied"]  # Adjust based on server naming
-
-            for _email in mails:
-                print(
-                    f"ID: {_email.id}, Email_id: {_email.email_id}, Subject: {_email.subject}, From: {_email.sender}, Date: {_email.date_received}")
-                if _email.server_folder not in EXCLUDED_FOLDERS and _email.sender != email:
-                    update_db_emailtags(_email, db)
-                    html = db_email_to_html(_email, selfmail=email)
-                    htmlmails.append(html)
-
-
-
-            # #time.sleep(5)
-            # status, messages = mail.search(None, 'SINCE', '19-Dec-2024')
-            # print("MESSAGES", messages)
-            # email_ids = messages[0].split()[:10]
-            # mails = htmlmails(mail,email_ids,myemail=email)
-
-
-            #Here, we should download all mails contents entirely, not just ids !! [Caching mail is not possible, and alternative is to reconnect all the time, we don't want that]
-            #for email_id in email_ids:
-            #    status, data = mail.fetch(email_id, "(RFC822)")
-
-
-
-            return render_template('lofimail.html', mails=htmlmails)
+            # Redirect to mailbox (the page with Sync button)
+            return redirect(url_for('show_mailbox'))
+            #
+            # print("\n**************\nNow retrieveing emails from local db\n***************\n")
+            # mails = fetch_mails_from_local_db(db)
+            # htmlmails=[]
+            #
+            # EXCLUDED_FOLDERS = ["Spam", "Trash", "Sent", "Junk", "Deleted Items",
+            #                     "Replied"]  # Adjust based on server naming
+            #
+            # for _email in mails:
+            #     print(
+            #         f"ID: {_email.id}, Email_id: {_email.email_id}, Subject: {_email.subject}, From: {_email.sender}, Date: {_email.date_received}")
+            #     if _email.server_folder not in EXCLUDED_FOLDERS and _email.sender != email:
+            #         update_db_emailtags(_email, db)
+            #         html = db_email_to_html(_email, selfmail=email)
+            #         htmlmails.append(html)
+            #
+            # return render_template('lofimail.html', mails=htmlmails)
 
         except Exception as e:
             # Handle errors and return failure response
@@ -122,6 +233,49 @@ def create_app():
             print(jsonify({'status': 'error', 'message': str(e)}))
             return render_template('login.html')
 
+    @app.route('/mailbox')
+    def show_mailbox():
+        email = session.get('email')
+        if not email:
+            return redirect(url_for('login_page'))  # or wherever your login form is
+
+        mails = fetch_mails_from_local_db(db)
+        htmlmails = []
+        EXCLUDED_FOLDERS = ["Spam", "Trash", "Sent", "Junk", "Deleted Items", "Replied"]
+
+        for _email in mails:
+            if _email.server_folder not in EXCLUDED_FOLDERS and _email.sender != email:
+                update_db_emailtags(_email, db)
+                html = db_email_to_html(_email, selfmail=email)
+                htmlmails.append(html)
+
+        return render_template('lofimail.html', mails=htmlmails, selfmail=email)
+
+    @app.route('/mails_fragment')
+    def mails_fragment():
+        """
+        Return an HTML fragment with the mails list. In your code you build htmlmails list.
+        Here we reuse your rendering function that creates HTML for mails (db_email_to_html).
+        You can also render a template fragment with a Jinja template for each mail.
+        """
+        email = session.get('email')
+        if not email:
+            return redirect(url_for('login_page'))  # or wherever your login form is
+
+        mails = fetch_mails_from_local_db(db)
+        htmlmails = []
+        EXCLUDED_FOLDERS = ["Spam", "Trash", "Sent", "Junk", "Deleted Items", "Replied"]
+
+        for _email in mails:
+            if _email.server_folder not in EXCLUDED_FOLDERS and _email.sender != email:
+                update_db_emailtags(_email, db)
+                html = db_email_to_html(_email, selfmail=email)
+                htmlmails.append(html)
+
+        #return render_template('lofimail.html', mails=htmlmails, selfmail=email)
+        # Return the inner HTML content only
+        return "\n".join(htmlmails)
+        #return jsonify({"html": "".join(htmlmails)})
 
 
     @app.route("/get-email-content/<email_id>")
@@ -146,10 +300,51 @@ def create_app():
         # Handle direct access if needed
         return render_template('lofimail.html')
 
+    from tools.tospeech import speak_text
+    @app.route('/speak')
+    def speak():
+        text = request.args.get('text', '')
+        print("SPEAK",text)
+        return speak_text(text)
 
-
+    # from tools.tospeech import generate_tts
+    # @app.route('/speak')
+    # def speak(text):
+    #    # text = request.args.get("text", "Bonjour Jean, bienvenue sur StaRL !")
+    #     voice = request.args.get("voice", "fr-FR-DeniseNeural")
+    #     filename = f"tmp_{uuid.uuid4()}.mp3"
+    #
+    #     try:
+    #         asyncio.run(generate_tts(text, voice, filename))
+    #
+    #         # Wait briefly if file not yet fully written
+    #         for _ in range(10):
+    #             if os.path.exists(filename) and os.path.getsize(filename) > 0:
+    #                 break
+    #             time.sleep(0.1)
+    #
+    #         if not os.path.exists(filename):
+    #             return jsonify({"error": "Audio file was not generated"}), 500
+    #
+    #         response = send_file(filename, mimetype="audio/mpeg")
+    #
+    #         @response.call_on_close
+    #         def cleanup():
+    #             try:
+    #                 os.remove(filename)
+    #             except Exception:
+    #                 pass
+    #
+    #         return response
+    #
+    #     except Exception as e:
+    #         print("❌ Error:", e)
+    #         return jsonify({"error": str(e)}), 500
     return app
+
+
+
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

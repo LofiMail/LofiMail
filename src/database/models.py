@@ -42,6 +42,7 @@ class Mail(db.Model):
     is_read = db.Column(db.Boolean, default=False)
     is_most_recent = db.Column(db.Boolean, default=True)
     parent_email_id = db.Column(db.Integer, db.ForeignKey('mails.id'))
+    #conversation_email_id = db.Column(db.Integer, db.ForeignKey('mails.id')) #Internal lof Id of root mail.
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     recipients = db.relationship('Recipient', backref='mail', lazy=True)
     #servertags = db.relationship('ServerTag', backref='mail', lazy=True)
@@ -50,6 +51,12 @@ class Mail(db.Model):
 
     # ✅ New column for the server folder path
     server_folder = db.Column(db.String, nullable=True, index=True)
+
+
+# class Conversation(db.Model):
+#     __tablename__ = 'conversations'
+#     id = db.Column(db.Integer, primary_key=True)
+#     rootmail_id = db.Column(db.String, index=True)
 
 
 class Recipient(db.Model):
@@ -99,7 +106,7 @@ class Action(db.Model):
 
 
 if __name__ == '__main__':
-    from src.app import app
+    from app import app
     app.run(debug=True)
     with app.app_context():
         db.create_all()

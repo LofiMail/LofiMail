@@ -1,4 +1,36 @@
 
+
+@font-face {
+  font-family: 'New Century Scholar';
+  src: url('../fonts/C059-Roman.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+font-face {
+  font-family: 'New Century Scholar';
+  src: url('../fonts/C059-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'New Century Scholar';
+  src: url('../fonts/C059-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'New Century Scholar';
+  src: url('../fonts/C059-BdIta.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+
 /* Anchor Link Styles */
 a.link {
   text-decoration: none; /* Removes default underline */
@@ -41,6 +73,7 @@ a.link {
 
 
 .message-body {
+    font-family: 'New Century Scholar', Helvetica, sans-serif;
 	padding: 20px;
 	line-height: 1.6;
 	color: #333;
@@ -169,15 +202,43 @@ display: inline-block;
 }
 
 .voice-button:hover {
-  background-color: #3578b0; Darker green when hovered */
-  /* background-color: #3578b0; /* Darker green when hovered */
-
+  background-color: #3578b0; /* darker when hovered */
 }
 
 .voice-button:focus {
   outline: none;
 }
+/* === SPEAKING STATE === */
+.voice-button.speaking {
+  background: linear-gradient(135deg, #1e90ff, #00bfff);
+  color: #fff;
+  box-shadow: 0 0 20px 5px rgba(30, 144, 255, 0.7);
+  transform: scale(1.1);
+  animation: pulseGlow 1.2s infinite ease-in-out;
+}
 
+/* Pulse animation (soft breathing effect) */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 8px 2px rgba(30, 144, 255, 0.5);
+    transform: scale(1.05);
+  }
+  50% {
+    box-shadow: 0 0 25px 6px rgba(0, 191, 255, 0.9);
+    transform: scale(1.15);
+  }
+  100% {
+    box-shadow: 0 0 8px 2px rgba(30, 144, 255, 0.5);
+    transform: scale(1.05);
+  }
+}
+
+/* Optional: hover effect even while speaking */
+.voice-button.speaking:hover {
+  background: linear-gradient(135deg, #00bfff, #1e90ff);
+  transform: scale(1.15);
+  box-shadow: 0 0 30px 8px rgba(0, 191, 255, 0.9);
+}
 
 
 

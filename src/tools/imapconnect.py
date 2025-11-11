@@ -2,19 +2,19 @@ import imaplib
 import email
 from email.header import decode_header
 from email.utils import getaddresses
-from src.tools.decode import parse_email_headers, extract_email_body,extract_email_body_newcontent, extract_novel_content
+from tools.decode import parse_email_headers, extract_email_body,extract_email_body_newcontent, extract_novel_content
 
 
-from src.tools.tohtml import generate_email_html, generate_email_modal
-from src.database.utils import get_last_email_uid, update_last_email_uid
+from tools.tohtml import generate_email_html
+from database.utils import get_last_email_uid, update_last_email_uid
 
-from src.database.models import Mail, Recipient, FolderStatus
+from database.models import Mail, Recipient, FolderStatus
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 from email.utils import parsedate_to_datetime
 import pytz
 
-from src.tools.processmail import summarize_body
+from tools.processmail import summarize_body
 
 def mailconnect(email,password,imap_server):
     # IMAP connection and email retrieval (simplified for context)
@@ -151,15 +151,19 @@ def fetch_single_email(mail, folder_name, email_uid, database_cursor):
 # Currently main function called:
 def fetch_emails_from_all_folders(mail, database):
     last_uid = get_last_email_uid()
+    highest_uid = last_uid
     print('LAST UID:', last_uid)
     # TODO:  ensure last_uid is integer type, and not e.g.  b'247440'. Convert it if necessary.
+
+    email_ids = fetch_newemails_from_folder(mail, database, last_uid, folder_name="ROOT")
+    if email_ids:
+        highest_uid = max(highest_uid, email_ids[-1].decode())
 
     status, folders = mail.list()
     if status != "OK":
         print("Failed to retrieve folders.")
         return
 
-    highest_uid = last_uid
   # Loop through each folder and fetch emails
     for folder in folders:
         parts = folder.decode().split(' "/" ')
@@ -695,54 +699,55 @@ def displaymails(mail, email_ids):
 
 
 if __name__ == '__main__':
-    try:
-
-        # Account credentials
-        # email_address = "email"  # Replace with your email address
-        # password = "ipassword"  # Replace with your LDAP password
-        # imap_server = "imap.company.fr"  # Replace with your IMAP server address
-
-        # Connect to the server and log in
-        mail = mailconnect(email_address,password,imap_server)
-
-        # Search for all emails
-        # status, messages = mail.search(None, "ALL")
-        status, messages = mail.search(None, 'SINCE', '25-Nov-2024')
-        # status, messages = mail.uid('search', None, 'UID 1000:*')
-        # status, messages = mail.uid('search', None, f'UID {uid}:*')
-
-        # Get the list of email IDs
-        email_ids = messages[0].split()[:10]
-
-        # uid=displaymails(mail,email_ids)
-        # htmlmails(mail,email_ids)
-        html = generate_email_modal(mail, email_ids[2])
-
-        # Print or save the HTML for rendering
-        print(html)
-
-        # Close the connection and logout
-        mail.logout()
-
-
-        ###################
-        # Check for mails after 5000:
-        last_processed_uid = "5000"  # Replace with the last stored UID
-
-        # Search for new emails with UID greater than the last processed
-        status, messages = mail.uid("SEARCH", f"UID {last_processed_uid}:*")
-        new_email_uids = messages[0].split()
-
-        # Update last_processed_uid to the newest UID
-        if new_email_uids:
-            last_processed_uid = new_email_uids[-1].decode()
-            print(f"Updated last UID to: {last_processed_uid}")
-
-        # Fetch and process the new emails
-        for uid in new_email_uids:
-            status, data = mail.uid("FETCH", uid, "(RFC822)")
-            email_message = email.message_from_bytes(data[0][1])
-            # Process the email
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    ()
+    #try:
+    #
+    #     # Account credentials
+    #     # email_address = "email"  # Replace with your email address
+    #     # password = "ipassword"  # Replace with your LDAP password
+    #     # imap_server = "imap.company.fr"  # Replace with your IMAP server address
+    #
+    #     # Connect to the server and log in
+    #     mail = mailconnect(email_address,password,imap_server)
+    #
+    #     # Search for all emails
+    #     # status, messages = mail.search(None, "ALL")
+    #     status, messages = mail.search(None, 'SINCE', '25-Nov-2024')
+    #     # status, messages = mail.uid('search', None, 'UID 1000:*')
+    #     # status, messages = mail.uid('search', None, f'UID {uid}:*')
+    #
+    #     # Get the list of email IDs
+    #     email_ids = messages[0].split()[:10]
+    #
+    #     # uid=displaymails(mail,email_ids)
+    #     # htmlmails(mail,email_ids)
+    #     html = generate_email_modal(mail, email_ids[2])
+    #
+    #     # Print or save the HTML for rendering
+    #     print(html)
+    #
+    #     # Close the connection and logout
+    #     mail.logout()
+    #
+    #
+    #     ###################
+    #     # Check for mails after 5000:
+    #     last_processed_uid = "5000"  # Replace with the last stored UID
+    #
+    #     # Search for new emails with UID greater than the last processed
+    #     status, messages = mail.uid("SEARCH", f"UID {last_processed_uid}:*")
+    #     new_email_uids = messages[0].split()
+    #
+    #     # Update last_processed_uid to the newest UID
+    #     if new_email_uids:
+    #         last_processed_uid = new_email_uids[-1].decode()
+    #         print(f"Updated last UID to: {last_processed_uid}")
+    #
+    #     # Fetch and process the new emails
+    #     for uid in new_email_uids:
+    #         status, data = mail.uid("FETCH", uid, "(RFC822)")
+    #         email_message = email.message_from_bytes(data[0][1])
+    #         # Process the email
+    #
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
