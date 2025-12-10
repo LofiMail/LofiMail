@@ -16,8 +16,8 @@ showRandomMantra();
 
 // Initial delay of 8 seconds
 setTimeout(() => {
-    showRandomMantra(); // Show first mantra after 8s
+    showRandomMantra(); 
 
     // Then repeat every 30 seconds
-    setInterval(showRandomMantra, 30000);
-}, 8000);
+    setInterval(showRandomMantra, 60000);
+}, 30000);// Show first mantra after 8s

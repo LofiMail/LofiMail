@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Conversations</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .conversation-container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .conversation-thread {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .thread-node {
+            padding-left: 1rem;
+            margin-left: 1.5rem;
+            border-left: 2px solid #d3e0ea;
+            margin-top: 0.5rem;
+        }
+
+        .email-header {
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .email-header:hover {
+            background-color: #e6f2ff;
+        }
+
+        .email-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .author-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #a6c1ee;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+
+        .expanded .toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        .email-body {
+            display: none;
+            margin-top: 0.5rem;
+            padding-left: 2rem;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .show {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+
+
+<div class="page-container">
+    <div class="webmail-container">
+        <div class="email-list-container">
+        <div class="email-list">
+            {% for mail in mails %}
+              {{ mail |safe }}
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+</div>
+
+<div class="conversation-container">
+
+    <!-- Example Conversation Thread -->
+    <div class="conversation-thread">
+        <div class="email-header" onclick="toggleThread(this)">
+            <div class="email-meta">
+                <div class="author-avatar">JD</div>
+                <div><strong>John Doe</strong> &mdash; Meeting Tomorrow</div>
+            </div>
+            <div class="toggle-icon">▶</div>
+        </div>
+
+        <div class="email-body">Don’t forget: meeting tomorrow at 10AM!</div>
+        <!-- Replies -->
+        <div class="thread-node">
+            <div class="email-header" onclick="toggleThread(this)">
+                <div class="email-meta">
+                    <div class="author-avatar" style="background:#fcbf49">AS</div>
+                    <div><strong>Alice Smith</strong> &mdash; Got it, thanks</div>
+                </div>
+                <div class="toggle-icon">▶</div>
+            </div>
+
+            <div class="thread-node">
+                <div class="email-header" onclick="toggleThread(this)">
+                    <div class="email-meta">
+                        <div class="author-avatar" style="background:#8ac926">BJ</div>
+                        <div><strong>Bob Johnson</strong> &mdash; I'll be there</div>
+                    </div>
+                    <div class="toggle-icon">▶</div>
+                </div>
+                <div class="email-body">Great! See you all tomorrow.</div>
+            </div>
+
+            <div class="email-body">Thanks John. I’ll be there.</div>
+        </div>
+
+    </div>
+
+    <!-- You can add more conversation threads here -->
+
+</div>
+
+<script>
+    function toggleThread(headerEl) {
+        const body = headerEl.nextElementSibling;
+        const icon = headerEl.querySelector(".toggle-icon");
+        if (body && body.classList.contains("email-body")) {
+            body.classList.toggle("show");
+            headerEl.classList.toggle("expanded");
+        } else {
+            // open all children of this node
+            let next = headerEl.nextElementSibling;
+            while (next && next.classList.contains("thread-node")) {
+                next.style.display = next.style.display === "none" ? "block" : "none";
+                next = next.nextElementSibling;
+            }
+            headerEl.classList.toggle("expanded");
+        }
+    }
+</script>
+
+</body>
+</html>

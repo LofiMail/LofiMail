@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Webmail Concept</title>
+
+
+    <link rel="stylesheet" href="static/css/lofimail_mainboard.css">
+    <link rel="stylesheet" href="static/css/lofimail_mailreader.css">
+
+
+</head>
+<body>
+<video autoplay muted loop id="background-video">
+    <!--<source src="static/media/background_house_HD.mp4" type="video/mp4">-->
+    <source src="static/media/breezy-beach.3840x2160.mp4" type="video/mp4">
+
+    Your browser does not support the video tag.
+</video>
+
+
+<div class="page-container">
+
+
+    <a class="music-button"
+       href="https://mynoise.net/NoiseMachines/canadaQuebecForestSoundscape.php?l=27272727000000002727&a=1&am=s&title=For%C3%AAt%20Ouareau"
+       onclick="
+      const width = 500;
+      const height = 480;
+      const left = (window.innerWidth - width) / 2 + window.screenX;  // Calculate the left position
+      const top = (window.innerHeight - height) / 2 + window.screenY; // Calculate the top position
+      const popup = window.open(
+         this.href,
+         'popup',
+         'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left +
+         ',toolbar=no,menubar=no,scrollbars=no,resizable=no,status=no'
+      );
+      if (popup) {
+         popup.document.body.style.opacity = '0.1'; // Reduce visibility
+         popup.blur(); // De-focus the popup
+		 window.focus();
+      }
+      return false;">🎶
+    </a>
+
+
+    <a href="/your-target-page" class="logo-link">
+  <img src="{{ url_for('static', filename='media/lofimaillogo1.png') }}" alt="LofiMail Logo" class="logo-image">
+</a>
+
+
+    <div class="quick-search-container">
+        <input type="text" class="quick-search-bar" id="quick-search" placeholder="Search or query..."/>
+        <span class="search-icon" title="Search"><i class="fas fa-search"></i></span>
+    </div>
+
+
+    <div class="webmail-container">
+
+        <div class="category-bar">
+
+            <div class="compose-button" onclick="openComposeModal()" title="Compose new mail">✉️</div>
+
+            <div class="category-tiles">
+                <div class="tile" data-category="all">None</div>
+                <div class="tile" data-category="one">Work</div>
+                <div class="tile" data-category="two">Personal</div>
+                <div class="tile" data-category="three">Finance</div>
+                <div class="tile" data-category="four">Shopping</div>
+                <div class="tile" data-category="five">Newletters</div>
+                <div class="category-tile new-tag-tile" onclick="openNewTagModal()" title="Define new category">
+                    <span class="plus-icon">+</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="conversation-list-container">
+            <div class="conversation-list">
+                {% for conversation in conversations %}
+                  {{ conversation |safe }}
+                 <div class="conversation">
+                     <!-- Conversation root -->
+                      <div class="conversation-item conversation-root">
+                        <div class="conversation-toggle" onclick="toggleThread(this, event)">▶</div>
+                        <div class="snippet-body" onclick="fetchAndShowEmailContent('msg-100')">
+                          <span class="email-sender">alice@example.com</span>
+                          <span class="email-title">Project Update</span>
+                          <span class="email-timestamp">Sep 23</span>
+                        </div>
+                      </div>
+
+                      <!-- Nested thread -->
+                      <div class="conversation-thread">
+                        <div class="thread-node">
+                          <div class="email-snippet">
+                            <div class="snippet-body" onclick="fetchAndShowEmailContent('msg-123')">
+                              <span class="email-sender">bob@example.com</span>
+                              <span class="email-title">Re: Project Update</span>
+                              <span class="email-timestamp">Sep 23</span>
+                            </div>
+                          </div>
+
+                          <div class="email-snippet">
+                            <div class="conversation-toggle" onclick="toggleThread(this, event)">▶</div>
+                            <div class="snippet-body" onclick="fetchAndShowEmailContent('msg-124')">
+                              <span class="email-sender">charles@example.com</span>
+                              <span class="email-title">Re: Project Update</span>
+                              <span class="email-timestamp">Sep 23</span>
+                            </div>
+                          </div>
+
+                          <!-- Child node -->
+                          <div class="thread-node">
+                            <div class="email-snippet">
+                              <div class="snippet-body" onclick="fetchAndShowEmailContent('msg-125')">
+                                <span class="email-sender">david@example.com</span>
+                                <span class="email-title">Re: Project Update</span>
+                                <span class="email-timestamp">Sep 23</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <!---  Mails  --->
+
+    <div class="message-modal" id="messageModalLong" style="display: none;">
+        <div class="message-header">Meeting Update</div>
+        <div class="message-meta">
+            <div class="author">
+                <span class="fromto">by</span>
+                <span class="author author-category-1"> John Doe</span>
+            </div>
+            <div class="recipients">
+                <span class="fromto">to</span>
+                <span class="recipient recipient-category-1">Alice Smith</span>
+                <span class="recipient recipient-category-2">Bob Johnson</span>
+                <span class="recipient recipient-category-3">Charlie Lee</span>
+            </div>
+            <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
+            <button class="close-button" onclick="closeEmail('messageModalLong')" title="Close mail">❌</button>
+        </div>
+
+        <hr class="message-separator">
+        <div class="message-body">
+            Dear Team, <br><br>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim
+            sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius
+            a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non
+            fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a,
+            enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue.
+            Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales.
+            Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris
+            ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.<br>
+
+            Ut velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla
+            sollicitudin. Fusce varius, ligula non tempus aliquam, nunc turpis ullamcorper nibh, in tempus sapien eros
+            vitae ligula. Pellentesque rhoncus nunc et augue. Integer id felis. Curabitur aliquet pellentesque diam.
+            Integer quis metus vitae elit lobortis egestas. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Morbi vel erat non mauris convallis vehicula. Nulla et sapien. Integer tortor tellus, aliquam faucibus,
+            convallis id, congue eu, quam. Mauris ullamcorper felis vitae erat. Proin feugiat, augue non elementum
+            posuere, metus purus iaculis lectus, et tristique ligula justo vitae magna.<br>
+
+
+            Aliquam convallis sollicitudin purus. Praesent aliquam, enim at fermentum mollis, ligula massa adipiscing
+            nisl, ac euismod nibh nisl eu lectus. Fusce vulputate sem at sapien. Vivamus leo. Aliquam euismod libero eu
+            enim. Nulla nec felis sed leo placerat imperdiet. Aenean suscipit nulla in justo. Suspendisse cursus rutrum
+            augue. Nulla tincidunt tincidunt mi. Curabitur iaculis, lorem vel rhoncus faucibus, felis magna fermentum
+            augue, et ultricies lacus lorem varius purus. Curabitur eu amet.<br><br>
+
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim
+            sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius
+            a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non
+            fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a,
+            enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue.
+            Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales.
+            Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris
+            ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.<br>
+
+            Ut velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla
+            sollicitudin. Fusce varius, ligula non tempus aliquam, nunc turpis ullamcorper nibh, in tempus sapien eros
+            vitae ligula. Pellentesque rhoncus nunc et augue. Integer id felis. Curabitur aliquet pellentesque diam.
+            Integer quis metus vitae elit lobortis egestas. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Morbi vel erat non mauris convallis vehicula. Nulla et sapien. Integer tortor tellus, aliquam faucibus,
+            convallis id, congue eu, quam. Mauris ullamcorper felis vitae erat. Proin feugiat, augue non elementum
+            posuere, metus purus iaculis lectus, et tristique ligula justo vitae magna.<br>
+
+
+            Aliquam convallis sollicitudin purus. Praesent aliquam, enim at fermentum mollis, ligula massa adipiscing
+            nisl, ac euismod nibh nisl eu lectus. Fusce vulputate sem at sapien. Vivamus leo. Aliquam euismod libero eu
+            enim. Nulla nec felis sed leo placerat imperdiet. Aenean suscipit nulla in justo. Suspendisse cursus rutrum
+            augue. Nulla tincidunt tincidunt mi. Curabitur iaculis, lorem vel rhoncus faucibus, felis magna fermentum
+            augue, et ultricies lacus lorem varius purus. Curabitur eu amet.<br><br>
+
+            Best regards,<br>
+            John
+        </div>
+        <div class="message-actions">
+            <button class="reply">Reply</button>
+            <button class="forward">Forward</button>
+            <button class="archive">Archive</button>
+        </div>
+        <div class="feature-box feature-summary">
+            <div class="feature-title">Summary</div>
+            <hr class="feature-separator">
+            <div>Team meeting scheduled for tomorrow at 10:00 AM.</div>
+        </div>
+        <div class="feature-box feature-actions">
+            <div class="feature-title">Quick links</div>
+            <hr class="feature-separator">
+            <ul>
+                <li><a href="#">📅 Add meeting to Calendar</a></li>
+                <li><a href="#">⏰ Remind me to reply todat before 4:00 PM</a></li>
+                <!--<li><a href="#">🔄 Follow-up client in 2 Days</a></li>-->
+                <li><a href="#">📨 Delegate to James for review.</a></li>
+                <!--<li><a href="#">⏳ Finish reviewing project by tomorrow morning</a></li>-->
+                <li><a href="#">⚡ Categorize as High-Priority for this Afternoon</a></li>
+                <!--<li><a href="#">🗓️ Review later during 'Admin Hour'</a></li>-->
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="mantras" id="mantra">
+		<div class="mantra" id="mantra-slot"></div>
+    </div>
+
+</div>
+
+
+<script src="static/js/lofimail_mainboard.js"></script>
+<script src="static/js/lofimail_mailreader.js"></script>
+
+<!--    function toggleThread(toggleEl, event) {-->
+<!--  event.stopPropagation(); // prevent triggering mail open-->
+<!--  const parentNode = toggleEl.closest('.email-snippet, .conversation-item');-->
+<!--  parentNode.parentElement.classList.toggle('thread-open');-->
+<!--}-->
+<!--    -->
+</body>
+</html>
+
+
+<!--
+
+Set a Reminder:
+
+"Remind me to reply tomorrow at 11:00 AM."
+"Set a reminder to follow up on this email in two days."
+"Remind me to respond to the client email after lunch."
+Set a Deadline:
+
+"Complete the report by 3:00 PM today."
+"Finish reviewing the attached document by tomorrow morning."
+"Finish the proposal by the end of the week."
+Categorize Email Tasks:
+
+"Move this task to the 'Admin' category."
+"Set this email as a high-priority task for this afternoon."
+"Schedule this email to be reviewed in 'technical work' at 2:00 PM."
+Delegate Tasks:
+
+"Forward this to Sarah for review and add a task for her to check it by Friday."
+"Assign this follow-up email to the team and remind them to respond by end of the day."
+Schedule an Event:
+
+"Add this meeting invitation to the calendar."
+"Schedule a meeting to discuss this project next Tuesday at 10:00 AM."
+"Send calendar invite for the follow-up meeting next week."
+Follow-Up:
+
+"Follow up with John about the proposal in 3 days."
+"Send a thank-you note after the meeting."
+"Ping the client if no response in 24 hours."
+Mark for Later Review:
+
+"Mark for later review during the 'Administrative hour' tomorrow."
+"Add to the 'Pending' list for tomorrow morning."
+"Review and respond by the end of the day."
+Link to External Tools:
+
+"Add this to the To-Do list app."
+"Create a task in the project management tool for follow-up."
+"Add this task to the task board for the design team."
+Tracking and Progress:
+
+"Set a task to track the status of this proposal every two days."
+
+
+-->

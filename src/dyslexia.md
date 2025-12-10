@@ -1,0 +1,11 @@
+ - police épurée et sans empattement
+ - taille de police suffisamment grande (l'idéal est qu'elle soit personnalisable)
+ - interligne plus élevé que la normale (2 points généralement)
+ - espacement entre les lettres plus grand (idéal = personnalisable)
+ - favoriser / augmenter les contrastes (pour les déficiences visuelles, le meilleur contraste de manière générale est celui d'Ikea : bleu sur jaune)
+ - mise en page aérée ++ (pas d'image de fond, pas de fioritures décoratives...)
+ - l'utilisation de couleurs pour différencier les items peut aider,
+ - avoir des hiérarchies explicites de contenus, toujours afficher le même type d'infos au même endroit,
+ - les outils du type "anti-oups" avant d'envoyer le mail (détection de pièce jointe oubliée, possibilité d'annuler l'envoi dans les 30/60sec...) sont utiles pour ce type de troubles,
+ - la possibilité de superposer leurs outils habituels de relecture / aide à l'écriture (ex : logiciel Antidote, Sprint, Lexibar...) et de lecture (synthèse vocale).
+ - pour aveugles qui lisent en braille 

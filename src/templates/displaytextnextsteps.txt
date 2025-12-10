@@ -1,0 +1,104 @@
+your_project/
+├── app.py
+├── templates/
+│   ├── layout.html             # Base layout (optional)
+│   ├── conversation_tree.html  # Main conversation view
+│   ├── mail_node.html          # Recursive email node template
+│   └── message_body.html       # Full email body (served in modal)
+├── static/
+│   ├── css/
+│   │   └── style.css           # Custom styles
+│   └── js/
+│       └── main.js             # JS for modal opening
+
+
+conversation_tree = [
+    {
+        "local_id": 1,
+        "subject": "Meeting Tomorrow",
+        "sender_name": "John Doe",
+        "snippet": "Hi team, just a reminder that...",
+        "children": [
+            {
+                "local_id": 2,
+                "subject": "Re: Meeting Tomorrow",
+                "sender_name": "Alice Smith",
+                "snippet": "Thanks John, I’ll be there.",
+                "children": []
+            },
+            {
+                "local_id": 3,
+                "subject": "Re: Meeting Tomorrow",
+                "sender_name": "Bob Johnson",
+                "snippet": "I have a conflict, but...",
+                "children": []
+            }
+        ]
+    }
+]
+
+//layout:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversation View</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
+
+
+
+
+//conversation_tree.html:
+{% extends "layout.html" %}
+{% block content %}
+<div class="conversation-container">
+    {% for root_mail in conversation_tree %}
+        {% include 'mail_node.html' with mail=root_mail %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+//mail_node.html (recursive):
+<div class="thread-node" style="margin-left: {{ depth|default(0) * 20 }}px;">
+    <div class="email-header" onclick="openEmail({{ mail.local_id }})">
+        <strong>{{ mail.sender_name }}</strong> &mdash;
+        {{ mail.subject }}
+        <div class="snippet">{{ mail.snippet }}</div>
+    </div>
+
+    {% if mail.children %}
+        {% for child in mail.children %}
+            {% include 'mail_node.html' with mail=child depth=(depth|default(0) + 1) %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+//Somewhere on html page:
+<div class="message-modal" id="messageModal" style="display: none;">
+    <div id="modalContent">Loading...</div>
+    <button onclick="closeEmail()">❌ Close</button>
+</div>
+
+
+//in js file:
+function openEmail(mailId) {
+    fetch(`/get_email_body/${mailId}`)
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('modalContent').innerHTML = html;
+            document.getElementById('messageModal').style.display = 'block';
+        });
+}
+
+
+function closeEmail() {
+    document.getElementById('messageModal').style.display = 'none';
+}

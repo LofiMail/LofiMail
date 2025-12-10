@@ -363,7 +363,7 @@ padding-left: 15px;
   justify-content: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .category-bar {
     top: 30px; /* Slightly adjust the top position */
     gap: 2px; /* Reduce space between tiles */
@@ -405,7 +405,7 @@ padding-left: 15px;
   justify-content: center; /* Center-align tiles */
   background-color: #f8f9fa;
   border-radius: 10px;
-  width: 1300px; /* Set the width in pixels */
+  width: 1500px; /* Set the width in pixels */
   margin: 15px auto; /* Center-align the container */
   max-width: 95%;
   align-items: center; /* Align items (tiles and button) vertically */
@@ -469,7 +469,7 @@ padding-left: 15px;
 
 
 .tile[data-category="six"] {
-  background: linear-gradient(145deg, #a72845, #7e1e34);
+  background: linear-gradient(145deg, #eb305c, #ee2856);
 }
 
 
@@ -663,6 +663,9 @@ padding-left: 15px;
   border-color: #ff0000;
 }
 
+.seven {
+  border-color: #ee88bb;
+}
 
 /* Category Badges */
 .email-category.one {
@@ -707,6 +710,11 @@ background-color: #34c759;
   color: #ffffff;
   /*background-color: #fff9e6;
   color: #ffcc00;*/
+}
+
+.email-category.seven {
+  background-color: #ee88bb;
+  color: #ffffff;
 }
 
 
@@ -837,7 +845,7 @@ body::after {
             box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.5);
 	    opacity: 0;
             animation: fadeInOut 60s infinite;
-            animation-delay: 10s; /* Staggered start */
+            animation-delay: 60s; /* Staggered start */
         }
 /*
 .mantras:hover {

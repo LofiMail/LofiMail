@@ -112,16 +112,38 @@ def process_email(email_content):
 # Fixed categories for now: make them adaptive later based on actual emails received.
 #TODO: Put these in the TAG database !
 CATEGORY_KEYWORDS = {
-    "Work": ["project", "meeting", "deadline", "report", "team"],
-    "Personal": ["birthday", "family", "vacation", "wedding", "trip"],
-    "Finance": ["invoice", "bank", "payment", "receipt", "subscription"],
-    "Shopping": ["order", "shipping", "discount", "deal", "promo"],
-    "Newsletters": ["newsletter", "update", "digest"],
-    "Events": ["RSVP", "conference", "webinar", "invite"],
-    "Social Media": ["Twitter", "LinkedIn", "new follower", "mention"],
-    "Support": ["help", "support", "ticket", "customer service"],
-    "Legal & Gov": ["IRS", "passport", "court", "contract", "policy"],
-    "Spam/Promo": ["win", "offer", "lottery", "bonus"],
+    "Projets": [
+        "research", "project", "proposal", "experiment", "data", "analysis",
+        "grant", "funding", "call for projects", "WP", "deliverable", "methodology",
+        "collaboration", "results", "publication plan", "progress report"
+    ],
+
+    "Publications": [
+        "manuscript", "submission", "review", "proof", "editor", "journal",
+        "conference", "symposium", "call for papers", "acceptance", "revision",
+        "citation", "ORCID", "DOI", "presentation", "slides", "abstract"
+    ],
+
+    "Encadrement": [
+        "PhD", "thesis", "doctoral", "supervision", "student", "internship",
+        "report", "meeting", "schedule", "evaluation", "progress", "mentor",
+        "master", "defense", "training", "advice", "feedback"
+    ],
+
+    "Administration": [
+        "university", "faculty", "department", "committee", "evaluation",
+        "budget", "HR", "contract", "policy", "regulation", "form",
+        "reporting", "audit", "compliance", "teaching", "schedule", "minutes", "mission"
+    ],
+
+    "Partenariats": [
+        "collaboration", "partner", "consortium", "agreement", "industry",
+        "stakeholder", "network", "association", "project partner",
+        "memorandum", "MoU", "innovation", "transfer", "outreach",
+        "meeting", "funding agency"
+    ],
+    "Séminaires": ["exposé", "speaker", "title", "abstract","invitation", "will welcome", "accueillerons"],
+    "Spam/Promo": ["win", "offer", "lottery", "bonus", "Sir or Madam", "unlisted"],
 }
 
 def auto_tag_email(email):

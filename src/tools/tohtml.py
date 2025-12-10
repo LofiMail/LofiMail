@@ -109,8 +109,8 @@ def db_email_to_html(email,selfmail=""):
     category_name = "Technical"
     #tag_names
     from tools.processmail import CATEGORY_KEYWORDS
-    nb_category = 6
-    ordinal = {1: "one",2:"two",3:"three",4:"four",5:"five", 6:"six"}
+    nb_category = 7
+    ordinal = {1: "one",2:"two",3:"three",4:"four",5:"five", 6:"six", 7:"seven"}
 
     html_cat = ""
     category_text = ""
