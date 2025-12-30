@@ -2,7 +2,8 @@ import edge_tts
 import asyncio
 import os, time
 import uuid
-from playsound import playsound
+import sounddevice as sd
+import soundfile as sf
 async def generate_tts(text, voice, filename):
     communicate = edge_tts.Communicate(text, voice=voice)
     await communicate.save(filename)
@@ -21,7 +22,9 @@ def speak_text(text):
             break
         time.sleep(0.1)
 
-    playsound(filename)
+    data,fs = sf.read(filename, dtype='float32')
+    sd.play(data,fs)
+    sd.wait()
     return filename
 # Example use:
 #asyncio.run(generate_tts("Hello Jean, welcome to your StaRL training platform!", voice="en-US-AriaNeural",filename="output.mp3"))
