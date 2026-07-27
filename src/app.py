@@ -21,6 +21,10 @@ from tools.processmail import update_db_emailtags, summarize_body
 
 import os, re
 
+import nltk
+nltk.download("punkt")
+nltk.download("punkt_tab")
+
 
 
 

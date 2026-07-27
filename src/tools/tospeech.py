@@ -4,13 +4,14 @@ import os, time
 import uuid
 import sounddevice as sd
 import soundfile as sf
+
 async def generate_tts(text, voice, filename):
     communicate = edge_tts.Communicate(text, voice=voice)
     await communicate.save(filename)
     print(f"Saved TTS to {filename}")
 
 
-def speak_text(text):
+def speak_text(text,lang='fr'):
     print("MESSAGE TO SPEAK",text)
     voice = "fr-FR-DeniseNeural"
     filename = f"tmp_{uuid.uuid4()}.mp3"

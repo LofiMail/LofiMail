@@ -15,18 +15,26 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 from email_reply_parser import EmailReplyParser
-
+from langdetect import detect
 #from transformers import pipeline
 
 def summarize_body(body):
 
+
+
     novel_body = extract_novel_content(body)
     #print("\nNOVEL BODY:\n", novel_body)
     #print("END NOVEL BODY\n")
+    lang = detect(novel_body)
+
+    if lang == "fr":
+        tokenizer = Tokenizer("french")
+    else:
+        tokenizer = Tokenizer("english")
 
     try:
         # Generate the summary with sumy
-        parser = PlaintextParser.from_string(novel_body, Tokenizer("english"))
+        parser = PlaintextParser.from_string(novel_body, tokenizer)
         # Use the LSA summarizer
         summarizer = LsaSummarizer()
         summary = summarizer(parser.document, 3)  # Summarize to 2 sentences
@@ -41,7 +49,7 @@ def summarize_body(body):
     except Exception as e:
         # Handle errors and return failure response
         print(f"Error: {e}")
-        return "Team meeting scheduled for tomorrow at 10:00 AM."
+        return f"Error: {e}"
 
 
 def highlight_important_words(text, top_n=5):
