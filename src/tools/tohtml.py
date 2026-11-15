@@ -1,5 +1,7 @@
 from email.utils import parseaddr, parsedate_to_datetime
 from datetime import datetime
+from pickle import NONE
+
 from tools.decode import decode_mime_text
 from tools.processmail import summarize_body, highlight_important_words, process_email
 
@@ -128,7 +130,7 @@ def db_email_to_html(email,selfmail=""):
         conversation_class= "conversation"
 
     html_code = f"""
-        <div class="email-item {conversation_class} {category_text}" onclick="fetchAndShowEmailContent('{email_id}')">
+        <div class="email-item {conversation_class} {category_text} {"read" if is_read else ""}" onclick="fetchAndShowEmailContent('{email_id}')">
                     <div class="email-conversation-summary">
                         <div class="conversation-icon" title="{participant_title}">
                             <span class="main-initial">{main_initial}</span>

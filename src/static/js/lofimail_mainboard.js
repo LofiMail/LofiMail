@@ -314,3 +314,71 @@ document.addEventListener("DOMContentLoaded", function() {
     fadeVideo(true);
     resetIdleTimer();
 });
+
+
+
+
+function openComposeModal(){
+
+    document.getElementById("composeModal").style.display="flex";
+
+    const title=document.getElementById("composeTitle");
+
+    title.focus();
+
+    title.select();
+
+}
+
+function closeComposeModal() {
+
+    document.getElementById("composeModal").style.display = "none";
+
+}
+
+window.addEventListener("click", function(event){
+
+    const modal = document.getElementById("composeModal");
+
+    if(event.target === modal){
+
+        closeComposeModal();
+
+    }
+
+});
+
+document.addEventListener("keydown", function(event){
+
+    if(event.key === "Escape"){
+
+        closeComposeModal();
+
+    }
+
+});
+
+function sendComposedMail(){
+
+    const data = {
+
+        to: document.getElementById("composeTo").value,
+
+        cc: document.getElementById("composeCc").value,
+
+        bcc: document.getElementById("composeBcc").value,
+
+        subject: document.getElementById("composeSubject").value,
+
+        body: document.getElementById("composeBody").value
+
+    };
+
+    console.log(data);
+
+    // Later:
+    // fetch("/send_mail", {...})
+
+    closeComposeModal();
+
+}

@@ -102,6 +102,9 @@ body {
   padding: 10px;
   margin-bottom: 5px; /* Extra spacing to account for "stacked" visuals */
 }
+.email-item.read{
+  opacity: 0.5
+}
 .email-flags {
   margin-right: 10px;
   font-size: 1.2rem;
@@ -906,3 +909,260 @@ body::after {
   transform: rotate(0deg);
 }
 
+
+
+/* ===========================================================
+   Compose Mail Modal
+   =========================================================== */
+
+.compose-modal {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    background: rgba(20,30,40,0.45);
+
+    backdrop-filter: blur(8px);
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+.compose-window {
+
+    width: 900px;
+
+    max-width: 92vw;
+
+    height: 720px;
+
+    max-height: 90vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: rgba(255,255,255,0.80);
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.35);
+
+}
+
+.compose-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 16px 20px;
+
+    background: rgba(70,130,220,0.90);
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+}
+
+
+.compose-title-input{
+
+    flex:1;
+
+    background:transparent;
+
+    border:none;
+
+    color:white;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    outline:none;
+
+    padding:4px;
+
+}
+
+.compose-title-input::placeholder{
+
+    color:rgba(255,255,255,.75);
+
+}
+
+.compose-close {
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 28px;
+
+}
+
+.compose-close:hover {
+
+    transform: scale(1.2);
+
+}
+
+.compose-content {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 18px;
+
+    gap: 12px;
+
+}
+
+.compose-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+.compose-row label {
+
+    width: 70px;
+
+    font-weight: bold;
+
+    color: #555;
+
+}
+
+.compose-row input {
+
+    flex: 1;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    border: 1px solid #bbb;
+
+    font-size: 15px;
+
+}
+
+.compose-body {
+
+    flex: 1;
+
+    resize: none;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    border: 1px solid #bbb;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+
+    font-family: inherit;
+
+    background: rgba(255,255,255,0.95);
+
+}
+
+.compose-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 16px;
+
+    background: rgba(245,245,245,0.95);
+
+}
+
+.compose-footer-right {
+
+    display: flex;
+
+    gap: 10px;
+
+}
+
+.compose-footer button {
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 10px 18px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    transition: 0.2s;
+
+}
+
+.compose-send {
+
+    background: #2196f3;
+
+    color: white;
+
+}
+
+.compose-send:hover {
+
+    background: #1976d2;
+
+}
+
+.compose-cancel {
+
+    background: #ddd;
+
+}
+
+.compose-cancel:hover {
+
+    background: #ccc;
+
+}
+
+.compose-attachment {
+
+    background: white;
+
+}

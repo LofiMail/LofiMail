@@ -435,6 +435,91 @@
 </div>
 
 
+
+<!-- ========================================================= -->
+<!-- Compose Mail Modal                                         -->
+<!-- ========================================================= -->
+
+<div id="composeModal" class="compose-modal">
+
+    <div class="compose-window">
+
+        <div class="compose-header">
+
+    <input
+        id="composeTitle"
+        class="compose-title-input"
+        type="text"
+        value="New message"
+        spellcheck="false">
+
+    <button
+        class="compose-close"
+        onclick="closeComposeModal()">
+        ✕
+    </button>
+
+</div>
+
+        <div class="compose-content">
+
+            <div class="compose-row">
+                <label>To</label>
+                <input id="composeTo" type="email" placeholder="recipient@example.com">
+            </div>
+
+            <div class="compose-row">
+                <label>Cc</label>
+                <input id="composeCc" type="text">
+            </div>
+
+            <div class="compose-row">
+                <label>Bcc</label>
+                <input id="composeBcc" type="text">
+            </div>
+
+            <div class="compose-row">
+                <label>Subject</label>
+                <input id="composeSubject" type="text">
+            </div>
+
+            <textarea
+                id="composeBody"
+                class="compose-body"
+                placeholder="Write your message...">
+            </textarea>
+
+        </div>
+
+        <div class="compose-footer">
+
+            <button class="compose-attachment">
+                📎 Attachment
+            </button>
+
+            <div class="compose-footer-right">
+
+                <button
+                    class="compose-cancel"
+                    onclick="closeComposeModal()">
+                    Cancel
+                </button>
+
+                <button
+                    class="compose-send"
+                    onclick="sendComposedMail()">
+                    ✈ Send
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <script src="static/js/lofimail_mainboard.js"></script>
 <script src="static/js/lofimail_mailreader.js"></script>
 <script src="static/js/lofimail_mantras.js"></script>
