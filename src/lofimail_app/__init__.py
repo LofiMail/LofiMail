@@ -3,8 +3,8 @@
 import nltk
 from flask import Flask
 
-from .config import configure_application
-from .routes import register_routes
+from lofimail_app.config import configure_application
+from lofimail_app.routes import register_routes
 
 
 def create_app():
@@ -20,3 +20,5 @@ def create_app():
 
     register_routes(app)
     return app
+
+
