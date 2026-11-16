@@ -1,10 +1,2 @@
-
-class ConversationNode:
-    def __init__(self, uid, msg_id, metadata=None):
-        self.uid = uid
-        self.msg_id = msg_id #Careful, could be malformed.
-        self.metadata = metadata or {}
-        self.children = []
-        self.parent = None  # Optional
-
-
+"""Compatibility import for conversation helpers (legacy module path)."""
+from lofimail_app.services.conversations import *  # noqa: F401,F403

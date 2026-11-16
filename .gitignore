@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# PyCharm
+.idea/
+
+# Local databases
+*.sqlite
+*.sqlite3
+*.db
+
+# Local secrets
+secret_key.txt
