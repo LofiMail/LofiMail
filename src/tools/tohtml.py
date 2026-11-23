@@ -1,31 +1,89 @@
-from email.utils import parseaddr, parsedate_to_datetime
+import html
+import re
 from datetime import datetime
-from pickle import NONE
-
-from tools.decode import decode_mime_text
-from tools.processmail import summarize_body, highlight_important_words, process_email
-
+from email.utils import parseaddr
 
 import pytz
-import html
+from bs4 import BeautifulSoup
+
+from tools.decode import decode_mime_text
 
 
+def _text(value):
+    """Return a string for optional values stored in email metadata."""
+    return "" if value is None else str(value)
 
-from html import escape
+
 def convert_text_to_html(text):
-    # Escape any existing HTML entities to prevent rendering issues
-    escaped_text = escape(text)
+    """Convert plain text to a small HTML fragment."""
+    escaped_text = html.escape(_text(text))
+    url_pattern = r"(https?://[^\\s]+)"
 
-    # Regex to find URLs
-    url_pattern = r'(https?://[^\s]+)'
+    def replace_url(match):
+        url = match.group(1)
+        trailing = ""
+        while url and url[-1] in ".,;:!?)]}":
+            trailing = url[-1] + trailing
+            url = url[:-1]
+        safe_url = html.escape(url, quote=True)
+        return (
+            f'<a href="{safe_url}" target="_blank" rel="noopener noreferrer" '
+            f'class="link">Link</a>{html.escape(trailing)}'
+        )
 
-    # Replace URLs with clickable HTML links
-    html_text = re.sub(url_pattern, r'<a href="\1" target="_blank" class="link">Link</a><br>', escaped_text)
+    escaped_text = re.sub(url_pattern, replace_url, escaped_text)
+    escaped_text = re.sub(r"\\r?\\n", "<br>", escaped_text.strip())
+    return f"<p>{escaped_text}</p>"
 
-    html_text=re.sub(r"\r?\n", "<br>", html_text.strip())
 
-    # Add simple <p> tags for formatting
-    return f"<p>{html_text}</p>"
+def _sanitize_email_html(source):
+    """Keep common email formatting while removing active or unsafe markup."""
+    soup = BeautifulSoup(source, "html.parser")
+    allowed_tags = {
+        "a", "b", "blockquote", "br", "caption", "center", "code", "div",
+        "em", "h1", "h2", "h3", "h4", "hr", "i", "li", "ol", "p",
+        "pre", "small", "span", "strong", "sub", "sup", "table", "tbody",
+        "td", "th", "thead", "tr", "u", "ul",
+    }
+    allowed_attributes = {
+        "a": {"href", "title"},
+        "td": {"colspan", "rowspan"},
+        "th": {"colspan", "rowspan"},
+    }
+
+    for node in list(soup.find_all(True)):
+        if node.name not in allowed_tags:
+            node.unwrap()
+            continue
+
+        for attribute in list(node.attrs):
+            if attribute not in allowed_attributes.get(node.name, set()):
+                del node.attrs[attribute]
+
+        if node.name == "a":
+            href = node.get("href", "")
+            if not href.lower().startswith(("https://", "http://", "mailto:")):
+                node.attrs.pop("href", None)
+            node["rel"] = "noopener noreferrer"
+
+    return str(soup)
+
+
+def _render_email_body(body):
+    """Render HTML email bodies and safely format plain-text messages."""
+    body = _text(body).strip()
+    if not body:
+        return '<p class="empty-email-body">[No message content]</p>'
+
+    html_tag_pattern = (
+        r"</?(?:html|head|body|div|p|br|table|thead|tbody|tr|td|th|"
+        r"ul|ol|li|h[1-6]|a|img|blockquote|pre|strong|em|span|style)\\b"
+    )
+    if re.search(html_tag_pattern, body, flags=re.IGNORECASE):
+        return _sanitize_email_html(body)
+
+    return convert_text_to_html(body)
+
 
 def db_email_to_html(email,selfmail=""):
 
