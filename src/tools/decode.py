@@ -86,7 +86,7 @@ def parse_email_headers(raw_email):
     }
 
 
-# def _decode_payload(payload, charset="utf-8"):
+def _decode_payload(payload, charset="utf-8"):
     """Decode MIME bytes even when a message declares an unknown charset."""
     if not payload:
         return ""
