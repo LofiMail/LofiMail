@@ -18,7 +18,7 @@ def _text(value):
 def convert_text_to_html(text):
     """Convert plain text to a small HTML fragment."""
     escaped_text = html.escape(_text(text))
-    url_pattern = r"(https?://[^\\s]+)"
+    url_pattern = r"(https?://[^\s]+)"
 
     def replace_url(match):
         url = match.group(1)
@@ -33,7 +33,7 @@ def convert_text_to_html(text):
         )
 
     escaped_text = re.sub(url_pattern, replace_url, escaped_text)
-    escaped_text = re.sub(r"\\r?\\n", "<br>", escaped_text.strip())
+    escaped_text = re.sub(r"\r?\n", "<br>", escaped_text.strip())
     return f"<p>{escaped_text}</p>"
 
 
