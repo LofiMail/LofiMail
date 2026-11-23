@@ -109,7 +109,7 @@ def db_email_to_html(email,selfmail=""):
 
 
     print("email_id:",email_id)
-    title = html.escape(decode_mime_text(subject) or "No subject")
+    title = decode_mime_text(subject) or "No subject"
 
     print("Title:",title)
 
