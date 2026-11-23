@@ -1,11 +1,15 @@
-from email.utils import parseaddr, parsedate_to_datetime
+import email
+import html
+import json
+import re
 from datetime import datetime
-from pickle import NONE
+from email.utils import parseaddr, parsedate_to_datetime
+
+import pytz
+from bs4 import BeautifulSoup
 
 from .email_content import decode_mime_text
 from .email_processing import summarize_body, highlight_important_words, process_email
-
-
 import pytz
 import html
 
@@ -13,19 +17,71 @@ import html
 
 from html import escape
 def convert_text_to_html(text):
-    # Escape any existing HTML entities to prevent rendering issues
-    escaped_text = escape(text)
+    """Convert plain text to a small HTML fragment."""
+    escaped_text = html.escape(_text(text))
+    url_pattern = r"(https?://[^\s]+)"
 
-    # Regex to find URLs
-    url_pattern = r'(https?://[^\s]+)'
+    def replace_url(match):
+        url = match.group(1)
+        trailing = ""
+        while url and url[-1] in ".,;:!?)]}":
+            trailing = url[-1] + trailing
+            url = url[:-1]
+        safe_url = html.escape(url, quote=True)
+        return (
+            f'<a href="{safe_url}" target="_blank" rel="noopener noreferrer" '
+            f'class="link">Link</a>{html.escape(trailing)}'
+        )
 
-    # Replace URLs with clickable HTML links
-    html_text = re.sub(url_pattern, r'<a href="\1" target="_blank" class="link">Link</a><br>', escaped_text)
+    escaped_text = re.sub(url_pattern, replace_url, escaped_text)
+    escaped_text = re.sub(r"\r?\n", "<br>", escaped_text.strip())
+    return f"<p>{escaped_text}</p>"
 
-    html_text=re.sub(r"\r?\n", "<br>", html_text.strip())
 
-    # Add simple <p> tags for formatting
-    return f"<p>{html_text}</p>"
+def _sanitize_email_html(source):
+    """Keep common email formatting while removing active or unsafe markup."""
+    soup = BeautifulSoup(source, "html.parser")
+    allowed_tags = {
+        "a", "b", "blockquote", "br", "caption", "center", "code", "div",
+        "em", "h1", "h2", "h3", "h4", "hr", "i", "li", "ol", "p",
+        "pre", "small", "span", "strong", "sub", "sup", "table", "tbody",
+        "td", "th", "thead", "tr", "u", "ul",
+    }
+    allowed_attributes = {
+        "a": {"href", "title"},
+        "td": {"colspan", "rowspan"},
+        "th": {"colspan", "rowspan"},
+    }
+    dangerous_tags = {"script", "style", "iframe", "object", "embed", "form", "input", "button"}
+
+    for node in list(soup.find_all(True)):
+        if node.name in dangerous_tags:
+            node.decompose()
+            continue
+        if node.name not in allowed_tags:
+            node.unwrap()
+            continue
+        for attribute in list(node.attrs):
+            if attribute not in allowed_attributes.get(node.name, set()):
+                del node.attrs[attribute]
+        if node.name == "a":
+            href = node.get("href", "")
+            if not href.lower().startswith(("https://", "http://", "mailto:")):
+                node.attrs.pop("href", None)
+            node["rel"] = "noopener noreferrer"
+    return str(soup)
+
+
+def _render_email_body(body):
+    """Render HTML email bodies and safely format plain-text messages."""
+    body = "" if body is None else str(body).strip()
+    if not body:
+        return '<p class="empty-email-body">[No message content]</p>'
+    html_tag_pattern = r"</?[a-z][a-z0-9:-]*(?:\s[^>]*)?>"
+    if re.search(html_tag_pattern, body, flags=re.IGNORECASE):
+        return _sanitize_email_html(body)
+    return convert_text_to_html(body)
+
 
 def db_email_to_html(email,selfmail=""):
 
@@ -42,7 +98,7 @@ def db_email_to_html(email,selfmail=""):
     # recipients
     recipients = email.recipients
     # tags
-    tag_names = [email_tag.tag.name for email_tag in email.tags]
+    tag_names = [email_tag.tag.name for email_tag in email.tags if email_tag.tag is not None]
     print("Tag names:", tag_names)
     # actions
 
@@ -50,11 +106,11 @@ def db_email_to_html(email,selfmail=""):
 
 
     print("email_id:",email_id)
-    title = decode_mime_text(subject)
+    title = decode_mime_text(subject) or "No subject"
 
     print("Title:",title)
 
-    sender_email = parseaddr(sender)[1]  # Extract the email address
+    sender_email = parseaddr("" if sender is None else str(sender))[1]  # Extract the email address
     print("sender_email:",sender_email)
     # Extract the main initial from the sender's name or email
     main_initial = sender_email[0].upper() if sender_email else "?"
@@ -63,20 +119,19 @@ def db_email_to_html(email,selfmail=""):
 
 
     print("date_received",date_received)
-    if date_received.tzinfo is None:
-        # If the received_time is naive, localize it to UTC
-        date_received = pytz.utc.localize(date_received)
-    # Decode time:
-    now_time = datetime.now(pytz.utc)
-    #received_time = parsedate_to_datetime(date_received).astimezone(pytz.utc)
-    time_diff = now_time - date_received
-    print(time_diff)
-    if time_diff.days > 0:
-        time_display = f"{time_diff.days}d"
-    elif time_diff.seconds > 3600:
-        time_display = f"{time_diff.seconds // 3600}h"
+    if date_received is None:
+        time_display = ""
     else:
-        time_display = f"{time_diff.seconds // 60}m"
+        if date_received.tzinfo is None:
+            date_received = pytz.utc.localize(date_received)
+        now_time = datetime.now(pytz.utc)
+        time_diff = now_time - date_received
+        if time_diff.days > 0:
+            time_display = f"{time_diff.days}d"
+        elif time_diff.seconds > 3600:
+            time_display = f"{time_diff.seconds // 3600}h"
+        else:
+            time_display = f"{time_diff.seconds // 60}m"
 
 
     print("time_display:",time_display)
@@ -121,7 +176,7 @@ def db_email_to_html(email,selfmail=""):
             i = list(CATEGORY_KEYWORDS).index(tagn)
             if (i<nb_category):
                 ctext = ordinal[i+1]
-                html_cat+=f"""<span class="email-category {ctext}">{tagn}</span>"""
+                html_cat+=f"""<span class="email-category {ctext}">{html.escape(str(tagn))}</span>"""
                 category_text+= f""" {ctext}"""
     print("CATEGORIES",html_cat, category_text)
 
@@ -130,7 +185,7 @@ def db_email_to_html(email,selfmail=""):
         conversation_class= "conversation"
 
     html_code = f"""
-        <div class="email-item {conversation_class} {category_text} {"read" if is_read else ""}" onclick="fetchAndShowEmailContent('{email_id}')">
+        <div class="email-item {conversation_class} {category_text} {"read" if is_read else ""}" onclick="fetchAndShowEmailContent(&quot;{html.escape(json.dumps("" if email_id is None else str(email_id)), quote=True)}&quot;)">
                     <div class="email-conversation-summary">
                         <div class="conversation-icon" title="{participant_title}">
                             <span class="main-initial">{main_initial}</span>
@@ -228,66 +283,31 @@ import email, re
 
 
 
-def db_email_to_modalhtml(email,selfmail=""):
+def db_email_to_modalhtml(email, selfmail=""):
+    """Build the email-detail fragment from a locally stored Mail record."""
+    title = html.escape(decode_mime_text(email.subject) or "No subject")
 
-    id = email.id
-    email_id= email.email_id
-    sender = email.sender
-    date_received = email.date_received
-    subject = email.subject
-    body = email.body
-    summary= email.summary
-    is_read= email.is_read
-    parent_email_id= email.parent_email_id
-    created_at = email.created_at
-    # recipients
-    recipients = email.recipients
-    # tags
-    tags = email.tags
-    # actions
+    sender_name, sender_email = parseaddr(_text(email.sender))
+    sender_name = decode_mime_text(sender_name) or sender_email or "Unknown sender"
+    sender_name = html.escape(sender_name)
 
+    recipient_html_parts = []
+    for index, recipient in enumerate(email.recipients):
+        name, address = parseaddr(_text(recipient.recipient))
+        display_name = decode_mime_text(name) or address
+        if not display_name or display_name == "None":
+            continue
+        recipient_html_parts.append(
+            f'<span class="recipient recipient-category-{(index + 1) % 5}">'
+            f'{html.escape(display_name)}</span>'
+        )
+    recipient_html = "\n".join(recipient_html_parts)
 
+    body_html = _render_email_body(email.body)
+    body_summary_html = convert_text_to_html(email.summary or "")
 
-
-    print("email_id:",email_id)
-    title = decode_mime_text(subject)
-
-
-    sender_name, sender_email = parseaddr(sender)
-    sender_name = decode_mime_text(sender_name) or sender_email
-
-
-    # Recipients
-    recipient_list = [parseaddr(recipient.recipient) for recipient in recipients]
-    recipient_html = ''.join(
-        f'<span class="recipient recipient-category-{(i + 1) % 5}">{decode_mime_text(name) or _email}</span>\n'
-        for i, (name, _email) in enumerate(recipient_list) if (decode_mime_text(name) or _email) != "None"
-    )
-
-
-
-    # Extract email body
-    #print("SUMMARY:", summary)
-    #body_summary = summarize_body(summary)
-    body_summary = summary
-    #Use highlight_important_words
-
-
-    #body = process_email(body)
-    #body = extract_body_fragments(body)
-
-    # Clean the body (convert line breaks to HTML-friendly <br>)
-    body_html = re.sub(r"\r?\n", "<br>", body.strip())
-
-
-    # Clean the body (convert line breaks to HTML-friendly <br>)
-    body_summary_html = convert_text_to_html(body_summary)
-
-
-
-    # Generate HTML
-    html = f"""
-            <div class="message-header">{title}</div> 
+    return f"""
+            <div class="message-header">{title}</div>
             <div class="message-meta">
                 <div class="author">
                     <span class="fromto">by</span>
@@ -296,7 +316,7 @@ def db_email_to_modalhtml(email,selfmail=""):
                 <div class="recipients">
                     <span class="fromto">to</span>
                     {recipient_html}
-                </div>  
+                </div>
                 <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
                 <button class="close-button" onclick="closeEmail('messageModal'); stopMailAudio();" title="Close mail">❌</button>
             </div>
@@ -310,7 +330,7 @@ def db_email_to_modalhtml(email,selfmail=""):
             <div class="feature-box feature-summary">
                 <div class="feature-title">Summary</div>
                 <hr class="feature-separator">
-    	        <div class="feature-summary-content">{body_summary_html}</div>
+                <div class="feature-summary-content">{body_summary_html}</div>
             </div>
             <div class="feature-box feature-actions">
               <div class="feature-title">Quick links</div>
@@ -324,10 +344,8 @@ def db_email_to_modalhtml(email,selfmail=""):
                 <li><a href="#">⚡ Categorize as High-Priority for this Afternoon</a></li>
                 <li><a href="#">🗓️ Review later during 'Admin Hour'</a></li>
               </ul>
-        </div>
-      </div>
+            </div>
         """
-    return html
 
 
 # DEPRECATED
