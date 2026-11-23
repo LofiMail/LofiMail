@@ -78,7 +78,7 @@ def _render_email_body(body):
 
     html_tag_pattern = (
         r"</?(?:html|head|body|div|p|br|table|thead|tbody|tr|td|th|"
-        r"ul|ol|li|h[1-6]|a|img|blockquote|pre|strong|em|span|style)\\b"
+        r"ul|ol|li|h[1-6]|a|img|blockquote|pre|strong|em|span|style)\b"
     )
     if re.search(html_tag_pattern, body, flags=re.IGNORECASE):
         return _sanitize_email_html(body)
