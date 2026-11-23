@@ -304,7 +304,7 @@ def db_email_to_modalhtml(email, selfmail=""):
             f'<span class="recipient recipient-category-{(index + 1) % 5}">'
             f'{html.escape(display_name)}</span>'
         )
-    recipient_html = "\\n".join(recipient_html_parts)
+    recipient_html = "\n".join(recipient_html_parts)
 
     body_html = _render_email_body(email.body)
     body_summary_html = convert_text_to_html(email.summary or "")
@@ -387,7 +387,7 @@ def generate_email_modal(mail, email_id):
     # Recipients
     recipients = email_message.get("To", "")
     recipient_list = [parseaddr(addr) for addr in recipients.split(",")]
-    recipient_html = ''.join(
+    recipient_html = "\n".join(recipient_html_parts)
         f'<span class="recipient recipient-category-{i + 1}">{decode_mime_text(name) or email}</span>'
         for i, (name, email) in enumerate(recipient_list)
     )
