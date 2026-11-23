@@ -86,7 +86,17 @@ def parse_email_headers(raw_email):
     }
 
 
-# def extract_email_body(parsed_email):
+# def _decode_payload(payload, charset="utf-8"):
+    """Decode MIME bytes even when a message declares an unknown charset."""
+    if not payload:
+        return ""
+    try:
+        return payload.decode(charset or "utf-8", errors="replace")
+    except LookupError:
+        return payload.decode("utf-8", errors="replace")
+
+
+def extract_email_body(parsed_email):
 #     try:
 #         if parsed_email.is_multipart():
 #             body = ""
@@ -131,7 +141,7 @@ def extract_email_body(parsed_email):
                     continue
 
                 charset = part.get_content_charset() or "utf-8"
-                decoded = payload.decode(charset, errors="replace")
+                decoded = _decode_payload(payload, charset)
 
                 if content_type == "text/html":
                     html_body = decoded
@@ -151,7 +161,7 @@ def extract_email_body(parsed_email):
             # Non-multipart: decode directly
             body = parsed_email.get_payload(decode=True)
             if body:
-                return body.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
+                return _decode_payload(body, parsed_email.get_content_charset() or "utf-8")
             else:
                 return "[No body content found]"
 
@@ -176,13 +186,13 @@ def extract_email_body_newcontent(parsed_email):
                     # Decode and return the first matching part
                     payload = part.get_payload(decode=True)
                     if payload:
-                        return payload.decode(part.get_content_charset() or "utf-8", errors="replace")
+                        return _decode_payload(payload, part.get_content_charset() or "utf-8")
 
         else:
             # If not multipart, decode and return the single payload
             payload = parsed_email.get_payload(decode=True)
             if payload:
-                return payload.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
+                return _decode_payload(payload, parsed_email.get_content_charset() or "utf-8")
 
         # If no content is found, return a fallback message
         return "[No new content detected]"
