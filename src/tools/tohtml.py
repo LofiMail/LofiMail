@@ -228,66 +228,31 @@ import email, re
 
 
 
-def db_email_to_modalhtml(email,selfmail=""):
+def db_email_to_modalhtml(email, selfmail=""):
+    """Build the email-detail fragment from a locally stored Mail record."""
+    title = html.escape(decode_mime_text(email.subject) or "No subject")
 
-    id = email.id
-    email_id= email.email_id
-    sender = email.sender
-    date_received = email.date_received
-    subject = email.subject
-    body = email.body
-    summary= email.summary
-    is_read= email.is_read
-    parent_email_id= email.parent_email_id
-    created_at = email.created_at
-    # recipients
-    recipients = email.recipients
-    # tags
-    tags = email.tags
-    # actions
+    sender_name, sender_email = parseaddr(_text(email.sender))
+    sender_name = decode_mime_text(sender_name) or sender_email or "Unknown sender"
+    sender_name = html.escape(sender_name)
 
+    recipient_html_parts = []
+    for index, recipient in enumerate(email.recipients):
+        name, address = parseaddr(_text(recipient.recipient))
+        display_name = decode_mime_text(name) or address
+        if not display_name or display_name == "None":
+            continue
+        recipient_html_parts.append(
+            f'<span class="recipient recipient-category-{(index + 1) % 5}">'
+            f'{html.escape(display_name)}</span>'
+        )
+    recipient_html = "\\n".join(recipient_html_parts)
 
+    body_html = _render_email_body(email.body)
+    body_summary_html = convert_text_to_html(email.summary or "")
 
-
-    print("email_id:",email_id)
-    title = decode_mime_text(subject)
-
-
-    sender_name, sender_email = parseaddr(sender)
-    sender_name = decode_mime_text(sender_name) or sender_email
-
-
-    # Recipients
-    recipient_list = [parseaddr(recipient.recipient) for recipient in recipients]
-    recipient_html = ''.join(
-        f'<span class="recipient recipient-category-{(i + 1) % 5}">{decode_mime_text(name) or _email}</span>\n'
-        for i, (name, _email) in enumerate(recipient_list) if (decode_mime_text(name) or _email) != "None"
-    )
-
-
-
-    # Extract email body
-    #print("SUMMARY:", summary)
-    #body_summary = summarize_body(summary)
-    body_summary = summary
-    #Use highlight_important_words
-
-
-    #body = process_email(body)
-    #body = extract_body_fragments(body)
-
-    # Clean the body (convert line breaks to HTML-friendly <br>)
-    body_html = re.sub(r"\r?\n", "<br>", body.strip())
-
-
-    # Clean the body (convert line breaks to HTML-friendly <br>)
-    body_summary_html = convert_text_to_html(body_summary)
-
-
-
-    # Generate HTML
-    html = f"""
-            <div class="message-header">{title}</div> 
+    return f"""
+            <div class="message-header">{title}</div>
             <div class="message-meta">
                 <div class="author">
                     <span class="fromto">by</span>
@@ -296,7 +261,7 @@ def db_email_to_modalhtml(email,selfmail=""):
                 <div class="recipients">
                     <span class="fromto">to</span>
                     {recipient_html}
-                </div>  
+                </div>
                 <button class="voice-button" onclick="speakMail()" title="Listen to mail">🔊</button>
                 <button class="close-button" onclick="closeEmail('messageModal'); stopMailAudio();" title="Close mail">❌</button>
             </div>
@@ -310,7 +275,7 @@ def db_email_to_modalhtml(email,selfmail=""):
             <div class="feature-box feature-summary">
                 <div class="feature-title">Summary</div>
                 <hr class="feature-separator">
-    	        <div class="feature-summary-content">{body_summary_html}</div>
+                <div class="feature-summary-content">{body_summary_html}</div>
             </div>
             <div class="feature-box feature-actions">
               <div class="feature-title">Quick links</div>
@@ -324,10 +289,8 @@ def db_email_to_modalhtml(email,selfmail=""):
                 <li><a href="#">⚡ Categorize as High-Priority for this Afternoon</a></li>
                 <li><a href="#">🗓️ Review later during 'Admin Hour'</a></li>
               </ul>
-        </div>
-      </div>
+            </div>
         """
-    return html
 
 
 # DEPRECATED
