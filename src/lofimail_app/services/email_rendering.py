@@ -10,12 +10,13 @@ from bs4 import BeautifulSoup
 
 from .email_content import decode_mime_text
 from .email_processing import summarize_body, highlight_important_words, process_email
-import pytz
-import html
 
 
+def _text(value):
+    """Return a string for optional values stored in email metadata."""
+    return "" if value is None else str(value)
 
-from html import escape
+
 def convert_text_to_html(text):
     """Convert plain text to a small HTML fragment."""
     escaped_text = html.escape(_text(text))
