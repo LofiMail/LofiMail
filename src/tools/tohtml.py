@@ -51,8 +51,12 @@ def _sanitize_email_html(source):
         "td": {"colspan", "rowspan"},
         "th": {"colspan", "rowspan"},
     }
+    dangerous_tags = {"script", "style", "iframe", "object", "embed", "form", "input", "button"}
 
     for node in list(soup.find_all(True)):
+        if node.name in dangerous_tags:
+            node.decompose()
+            continue
         if node.name not in allowed_tags:
             node.unwrap()
             continue
@@ -76,10 +80,7 @@ def _render_email_body(body):
     if not body:
         return '<p class="empty-email-body">[No message content]</p>'
 
-    html_tag_pattern = (
-        r"</?(?:html|head|body|div|p|br|table|thead|tbody|tr|td|th|"
-        r"ul|ol|li|h[1-6]|a|img|blockquote|pre|strong|em|span|style)\b"
-    )
+    html_tag_pattern = r"</?[a-z][a-z0-9:-]*(?:\s[^>]*)?>"
     if re.search(html_tag_pattern, body, flags=re.IGNORECASE):
         return _sanitize_email_html(body)
 
