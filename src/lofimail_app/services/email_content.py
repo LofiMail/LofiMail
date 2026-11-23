@@ -12,21 +12,19 @@ def is_valid_message_id(message_id):
 
 
 def decode_mime_text(text):
-    # Regex to find MIME-encoded parts
-    mime_pattern = r'=\?[^?]+\?[BQ]\?[^?]+\?='
+    """Decode RFC 2047 MIME headers, including malformed/unknown charsets."""
+    if text is None:
+        return ""
+    if not isinstance(text, str):
+        text = str(text)
 
-    # Function to decode a single MIME-encoded segment
-    def decode_mime_part(match):
-        part = match.group(0)
-        decoded_parts = decode_header(part)
-        return ''.join(
-            part.decode(encoding or "utf-8") if isinstance(part, bytes) else part
-            for part, encoding in decoded_parts
-        )
+    try:
+        decoded = make_header(decode_header(text))
+        return str(decoded)
+    except (LookupError, UnicodeError, ValueError, TypeError):
+        # Keep a readable fallback rather than breaking rendering of one message.
+        return text
 
-    # Replace all MIME-encoded parts with their decoded values
-    decoded_text = re.sub(mime_pattern, decode_mime_part, text)
-    return decoded_text
 
 
 import email
@@ -87,7 +85,17 @@ def parse_email_headers(raw_email):
     }
 
 
-# def extract_email_body(parsed_email):
+# def _decode_payload(payload, charset="utf-8"):
+    """Decode MIME bytes even when a message declares an unknown charset."""
+    if not payload:
+        return ""
+    try:
+        return payload.decode(charset or "utf-8", errors="replace")
+    except LookupError:
+        return payload.decode("utf-8", errors="replace")
+
+
+def extract_email_body(parsed_email):
 #     try:
 #         if parsed_email.is_multipart():
 #             body = ""
@@ -132,7 +140,7 @@ def extract_email_body(parsed_email):
                     continue
 
                 charset = part.get_content_charset() or "utf-8"
-                decoded = payload.decode(charset, errors="replace")
+                decoded = _decode_payload(payload, charset)
 
                 if content_type == "text/html":
                     html_body = decoded
@@ -152,7 +160,7 @@ def extract_email_body(parsed_email):
             # Non-multipart: decode directly
             body = parsed_email.get_payload(decode=True)
             if body:
-                return body.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
+                return _decode_payload(body, parsed_email.get_content_charset() or "utf-8")
             else:
                 return "[No body content found]"
 
@@ -177,13 +185,13 @@ def extract_email_body_newcontent(parsed_email):
                     # Decode and return the first matching part
                     payload = part.get_payload(decode=True)
                     if payload:
-                        return payload.decode(part.get_content_charset() or "utf-8", errors="replace")
+                        return _decode_payload(payload, part.get_content_charset() or "utf-8")
 
         else:
             # If not multipart, decode and return the single payload
             payload = parsed_email.get_payload(decode=True)
             if payload:
-                return payload.decode(parsed_email.get_content_charset() or "utf-8", errors="replace")
+                return _decode_payload(payload, parsed_email.get_content_charset() or "utf-8")
 
         # If no content is found, return a fallback message
         return "[No new content detected]"
