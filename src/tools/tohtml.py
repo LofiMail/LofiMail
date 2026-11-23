@@ -1,4 +1,5 @@
 import html
+import json
 import re
 from datetime import datetime
 from email.utils import parseaddr
@@ -100,7 +101,7 @@ def db_email_to_html(email,selfmail=""):
     # recipients
     recipients = email.recipients
     # tags
-    tag_names = [email_tag.tag.name for email_tag in email.tags]
+    tag_names = [email_tag.tag.name for email_tag in email.tags if email_tag.tag is not None]
     print("Tag names:", tag_names)
     # actions
 
@@ -108,11 +109,11 @@ def db_email_to_html(email,selfmail=""):
 
 
     print("email_id:",email_id)
-    title = decode_mime_text(subject)
+    title = html.escape(decode_mime_text(subject) or "No subject")
 
     print("Title:",title)
 
-    sender_email = parseaddr(sender)[1]  # Extract the email address
+    sender_email = parseaddr(_text(sender))[1]  # Extract the email address
     print("sender_email:",sender_email)
     # Extract the main initial from the sender's name or email
     main_initial = sender_email[0].upper() if sender_email else "?"
@@ -121,20 +122,19 @@ def db_email_to_html(email,selfmail=""):
 
 
     print("date_received",date_received)
-    if date_received.tzinfo is None:
-        # If the received_time is naive, localize it to UTC
-        date_received = pytz.utc.localize(date_received)
-    # Decode time:
-    now_time = datetime.now(pytz.utc)
-    #received_time = parsedate_to_datetime(date_received).astimezone(pytz.utc)
-    time_diff = now_time - date_received
-    print(time_diff)
-    if time_diff.days > 0:
-        time_display = f"{time_diff.days}d"
-    elif time_diff.seconds > 3600:
-        time_display = f"{time_diff.seconds // 3600}h"
+    if date_received is None:
+        time_display = ""
     else:
-        time_display = f"{time_diff.seconds // 60}m"
+        if date_received.tzinfo is None:
+            date_received = pytz.utc.localize(date_received)
+        now_time = datetime.now(pytz.utc)
+        time_diff = now_time - date_received
+        if time_diff.days > 0:
+            time_display = f"{time_diff.days}d"
+        elif time_diff.seconds > 3600:
+            time_display = f"{time_diff.seconds // 3600}h"
+        else:
+            time_display = f"{time_diff.seconds // 60}m"
 
 
     print("time_display:",time_display)
@@ -179,7 +179,7 @@ def db_email_to_html(email,selfmail=""):
             i = list(CATEGORY_KEYWORDS).index(tagn)
             if (i<nb_category):
                 ctext = ordinal[i+1]
-                html_cat+=f"""<span class="email-category {ctext}">{tagn}</span>"""
+                html_cat+=f"""<span class="email-category {ctext}">{html.escape(str(tagn))}</span>"""
                 category_text+= f""" {ctext}"""
     print("CATEGORIES",html_cat, category_text)
 
@@ -188,7 +188,7 @@ def db_email_to_html(email,selfmail=""):
         conversation_class= "conversation"
 
     html_code = f"""
-        <div class="email-item {conversation_class} {category_text} {"read" if is_read else ""}" onclick="fetchAndShowEmailContent('{email_id}')">
+        <div class="email-item {conversation_class} {category_text} {"read" if is_read else ""}" onclick="fetchAndShowEmailContent(&quot;{html.escape(json.dumps(_text(email_id)), quote=True)}&quot;)">
                     <div class="email-conversation-summary">
                         <div class="conversation-icon" title="{participant_title}">
                             <span class="main-initial">{main_initial}</span>
