@@ -12,21 +12,20 @@ def is_valid_message_id(message_id):
 
 
 def decode_mime_text(text):
-    # Regex to find MIME-encoded parts
-    mime_pattern = r'=\?[^?]+\?[BQ]\?[^?]+\?='
+    """Decode RFC 2047 MIME headers, including malformed/unknown charsets."""
+    if text is None:
+        return ""
+    if not isinstance(text, str):
+        text = str(text)
 
-    # Function to decode a single MIME-encoded segment
-    def decode_mime_part(match):
-        part = match.group(0)
-        decoded_parts = decode_header(part)
-        return ''.join(
-            part.decode(encoding or "utf-8") if isinstance(part, bytes) else part
-            for part, encoding in decoded_parts
-        )
+    try:
+        decoded = make_header(decode_header(text))
+        return str(decoded)
+    except (LookupError, UnicodeError, ValueError, TypeError):
+        # Keep a readable fallback rather than breaking rendering of one message.
+        return text
 
-    # Replace all MIME-encoded parts with their decoded values
-    decoded_text = re.sub(mime_pattern, decode_mime_part, text)
-    return decoded_text
+
 
 
 import email
